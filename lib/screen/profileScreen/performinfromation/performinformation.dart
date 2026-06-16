@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,10 +18,24 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   final Color textGrey = const Color(0xFF8C8C8C);
 
   // Text Controllers (Dummy Data Inserted)
-  final TextEditingController nameController = TextEditingController(text: 'Madhab');
-  final TextEditingController emailController = TextEditingController(text: 'madhabshit4142@gmail.com');
-  final TextEditingController phoneController = TextEditingController(text: '+880 1234 567890');
-  final TextEditingController dobController = TextEditingController(text: '15 August, 1998');
+  final TextEditingController nameController = TextEditingController(
+    text: 'Madhab',
+  );
+  final TextEditingController emailController = TextEditingController(
+    text: 'madhabshit4142@gmail.com',
+  );
+  final TextEditingController phoneController = TextEditingController(
+    text: '+880 1234 567890',
+  );
+  final TextEditingController dobController = TextEditingController(
+    text: '15 August, 1998',
+  );
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadUserData();
+  }
 
   @override
   void dispose() {
@@ -28,6 +44,89 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     phoneController.dispose();
     dobController.dispose();
     super.dispose();
+  }
+
+  bool isLoading = true;
+
+  Future<void> loadUserData() async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+
+      if (uid == null) return;
+
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data()!;
+
+        nameController.text = data['name'] ?? 'N/A';
+        emailController.text = data['email'] ?? 'N/A';
+
+        phoneController.text = data['phone']?.toString().isNotEmpty == true
+            ? data['phone']
+            : 'N/A';
+
+        dobController.text = data['dob']?.toString().isNotEmpty == true
+            ? data['dob']
+            : 'N/A';
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> _selectDate() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1950),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null) {
+      dobController.text =
+          "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+    }
+  }
+
+  bool savelogin = false;
+  Future<void> updateProfile() async {
+    setState(() {
+      savelogin = true;
+    });
+
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+
+      if (uid == null) return;
+
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        "name": nameController.text.trim(),
+        "phone": phoneController.text.trim(),
+        "dob": dobController.text.trim(),
+      });
+
+      Get.snackbar(
+        "Success",
+        "Profile updated successfully",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      Get.snackbar("Error", e.toString(), snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      if (mounted) {
+        setState(() {
+          savelogin = false;
+        });
+      }
+    }
   }
 
   @override
@@ -51,54 +150,58 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 10),
-            _buildProfileImagePicker(),
-            const SizedBox(height: 32),
-            
-            // Input Fields
-            _buildInputField(
-              label: 'Full Name',
-              controller: nameController,
-              icon: Icons.person_outline,
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(color: Color(0xFFFF7A00)),
+            )
+          : SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 10),
+                  _buildProfileImagePicker(),
+                  const SizedBox(height: 32),
+
+                  // Input Fields
+                  _buildInputField(
+                    label: 'Full Name',
+                    controller: nameController,
+                    icon: Icons.person_outline,
+                  ),
+                  const SizedBox(height: 20),
+
+                  _buildInputField(
+                    label: 'Email Address',
+                    controller: emailController,
+                    icon: Icons.email_outlined,
+                    isReadOnly: true, // Email is usually non-editable directly
+                  ),
+                  const SizedBox(height: 20),
+
+                  _buildInputField(
+                    label: 'Phone Number',
+                    controller: phoneController,
+                    icon: Icons.phone_outlined,
+                    keyboardType: TextInputType.phone,
+                  ),
+                  const SizedBox(height: 20),
+
+                  _buildInputField(
+                    label: 'Date of Birth',
+                    controller: dobController,
+                    icon: Icons.calendar_today_outlined,
+                    isReadOnly: true,
+                    onTap: () {
+                      _selectDate();
+                    },
+                  ),
+
+                  const SizedBox(height: 40),
+                  _buildSaveButton(),
+                ],
+              ),
             ),
-            const SizedBox(height: 20),
-            
-            _buildInputField(
-              label: 'Email Address',
-              controller: emailController,
-              icon: Icons.email_outlined,
-              isReadOnly: true, // Email is usually non-editable directly
-            ),
-            const SizedBox(height: 20),
-            
-            _buildInputField(
-              label: 'Phone Number',
-              controller: phoneController,
-              icon: Icons.phone_outlined,
-              keyboardType: TextInputType.phone,
-            ),
-            const SizedBox(height: 20),
-            
-            _buildInputField(
-              label: 'Date of Birth',
-              controller: dobController,
-              icon: Icons.calendar_today_outlined,
-              isReadOnly: true,
-              onTap: () {
-                // TODO: Show Date Picker
-              },
-            ),
-            
-            const SizedBox(height: 40),
-            _buildSaveButton(),
-          ],
-        ),
-      ),
     );
   }
 
@@ -220,17 +323,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: () {
-          // TODO: Implement Save Functionality
-          Get.snackbar(
-            'Success',
-            'Profile updated successfully!',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green.shade600,
-            colorText: Colors.white,
-            margin: const EdgeInsets.all(20),
-            borderRadius: 12,
-          );
+        onPressed: () async {
+          updateProfile();
+
+          Get.snackbar("Success", "Profile updated successfully");
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryOrange,
@@ -240,15 +336,17 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           ),
           shadowColor: primaryOrange.withOpacity(0.4),
         ),
-        child: const Text(
-          'Save Changes',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
-          ),
-        ),
+        child: savelogin
+            ? Center(child: CircularProgressIndicator(color: Colors.white))
+            : const Text(
+                'Save Changes',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
+              ),
       ),
     );
   }
