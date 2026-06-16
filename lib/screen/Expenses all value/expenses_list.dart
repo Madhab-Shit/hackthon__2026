@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:hacathon_2026/controller/expenses_list_controller.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ExpensesScreen extends StatefulWidget {
   const ExpensesScreen({super.key});
@@ -41,11 +42,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
             ),
           ),
           body: provider.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(
-                    color: Color(0xFFFF7B00),
-                  ),
-                )
+              ? _buildExpensesShimmer()
               : RefreshIndicator(
                   color: const Color(0xFFFF7B00),
                   onRefresh: () async {
@@ -89,9 +86,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                             final group = provider.expenseGroups[index - 1];
 
                             final List<Map<String, dynamic>> items =
-                                List<Map<String, dynamic>>.from(
-                              group['items'],
-                            );
+                                List<Map<String, dynamic>>.from(group['items']);
 
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,10 +208,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
           ),
 
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 5,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: const Color(0xFFFF7B00).withOpacity(0.12),
               borderRadius: BorderRadius.circular(20),
@@ -247,10 +239,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: const Color(0xFFF2F2F7),
-          width: 1.5,
-        ),
+        border: Border.all(color: const Color(0xFFF2F2F7), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.025),
@@ -351,11 +340,45 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
         color: color.withOpacity(0.12),
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        icon,
-        color: color,
-        size: 24,
-      ),
+      child: Icon(icon, color: color, size: 24),
     );
   }
+}
+
+Widget _buildExpensesShimmer() {
+  return ListView(
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+    children: [
+      Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Container(
+          height: 110,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+          ),
+        ),
+      ),
+
+      const SizedBox(height: 24),
+
+      ...List.generate(6, (index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
+            child: Container(
+              height: 85,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+              ),
+            ),
+          ),
+        );
+      }),
+    ],
+  );
 }

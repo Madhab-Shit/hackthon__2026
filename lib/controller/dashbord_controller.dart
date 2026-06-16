@@ -147,11 +147,7 @@ class DashboardProvider extends ChangeNotifier {
         return dateB.compareTo(dateA);
       });
 
-      return {
-        'date': date,
-        'title': _formatDateTitle(date),
-        'items': items,
-      };
+      return {'date': date, 'title': _formatDateTitle(date), 'items': items};
     }).toList();
   }
 
@@ -172,42 +168,56 @@ class DashboardProvider extends ChangeNotifier {
     _expenseLoaded = false;
     notifyListeners();
 
-    final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid);
 
     _goalSub = userRef
         .collection('goals')
         .doc('premium_goal')
         .snapshots()
-        .listen((doc) async {
-      if (doc.exists) {
-        _applyGoalData(doc.data());
-      } else {
-        final goalsSnap = await userRef.collection('goals').limit(1).get();
+        .listen(
+          (doc) async {
+            if (doc.exists) {
+              _applyGoalData(doc.data());
+            } else {
+              final goalsSnap = await userRef
+                  .collection('goals')
+                  .limit(1)
+                  .get();
 
-        if (goalsSnap.docs.isNotEmpty) {
-          _applyGoalData(goalsSnap.docs.first.data());
-        } else {
-          _applyGoalData(null);
-        }
-      }
+              if (goalsSnap.docs.isNotEmpty) {
+                _applyGoalData(goalsSnap.docs.first.data());
+              } else {
+                _applyGoalData(null);
+              }
+            }
 
-      _goalLoaded = true;
-      _updateLoadingState();
-    }, onError: (e) {
-      debugPrint("Goal listener error: $e");
-      _goalLoaded = true;
-      _updateLoadingState();
-    });
+            _goalLoaded = true;
+            _updateLoadingState();
+          },
+          onError: (e) {
+            debugPrint("Goal listener error: $e");
+            _goalLoaded = true;
+            _updateLoadingState();
+          },
+        );
 
-    _expenseSub = userRef.collection('expenses').snapshots().listen((snap) {
-      _applyExpensesData(snap.docs);
-      _expenseLoaded = true;
-      _updateLoadingState();
-    }, onError: (e) {
-      debugPrint("Expense listener error: $e");
-      _expenseLoaded = true;
-      _updateLoadingState();
-    });
+    _expenseSub = userRef
+        .collection('expenses')
+        .snapshots()
+        .listen(
+          (snap) {
+            _applyExpensesData(snap.docs);
+            _expenseLoaded = true;
+            _updateLoadingState();
+          },
+          onError: (e) {
+            debugPrint("Expense listener error: $e");
+            _expenseLoaded = true;
+            _updateLoadingState();
+          },
+        );
   }
 
   Future<void> fetchDashboardData() async {
@@ -223,11 +233,14 @@ class DashboardProvider extends ChangeNotifier {
         return;
       }
 
-      final userRef =
-          FirebaseFirestore.instance.collection('users').doc(user.uid);
+      final userRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid);
 
-      final premiumGoalDoc =
-          await userRef.collection('goals').doc('premium_goal').get();
+      final premiumGoalDoc = await userRef
+          .collection('goals')
+          .doc('premium_goal')
+          .get();
 
       if (premiumGoalDoc.exists) {
         _applyGoalData(premiumGoalDoc.data());

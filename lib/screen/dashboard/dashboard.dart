@@ -5,6 +5,7 @@ import 'package:hacathon_2026/controller/goal_provider.dart';
 import 'package:hacathon_2026/screen/add%20Expense/add_expese.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -76,9 +77,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 255, 247, 238),
           body: dashboardProvider.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(color: Color(0xFFFF7B00)),
-                )
+              ? _buildDashboardShimmer()
               : SafeArea(
                   child: RefreshIndicator(
                     color: const Color(0xFFFF7B00),
@@ -223,30 +222,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                 ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () async {
-              await Get.to(() => const AddExpenseScreen());
+          floatingActionButton: dashboardProvider.isLoading
+              ? _buildDashboardShimmer()
+              : FloatingActionButton.extended(
+                  onPressed: () async {
+                    await Get.to(() => const AddExpenseScreen());
 
-              if (context.mounted) {
-                context.read<DashboardProvider>().fetchDashboardData();
-              }
-            },
-            backgroundColor: const Color(0xFFFF7B00),
-            elevation: 6,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            icon: const Icon(Icons.add_rounded, color: Colors.white, size: 24),
-            heroTag: null,
-            label: const Text(
-              "Add Expense",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ),
+                    if (context.mounted) {
+                      context.read<DashboardProvider>().fetchDashboardData();
+                    }
+                  },
+                  backgroundColor: const Color(0xFFFF7B00),
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  icon: const Icon(
+                    Icons.add_rounded,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                  heroTag: null,
+                  label: const Text(
+                    "Add Expense",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
         );
       },
     );
@@ -933,4 +938,52 @@ class PremiumGoalDialog extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildDashboardShimmer() {
+  return Padding(
+    padding: const EdgeInsets.all(20),
+    child: Column(
+      children: [
+        Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            height: 180,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 20),
+
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 4,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 1.2,
+          ),
+          itemBuilder: (_, __) {
+            return Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+  );
 }
