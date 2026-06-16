@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hacathon_2026/controller/dashbord_controller.dart';
 import 'package:hacathon_2026/screen/add%20Expense/add_expese.dart';
-<<<<<<< HEAD
-import 'package:shared_preferences/shared_preferences.dart';
-=======
 import 'package:provider/provider.dart';
->>>>>>> 8222be1ba633323fcc2f41f6fd540a5d2ee38232
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
