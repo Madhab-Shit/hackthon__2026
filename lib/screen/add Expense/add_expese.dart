@@ -345,7 +345,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           context: context,
           initialDate: selectedDate,
           firstDate: DateTime(2000),
-          lastDate: DateTime(2101),
+          lastDate: DateTime.now(),
           helpText: 'SELECT DATE',
           cancelText: 'CANCEL',
           confirmText: 'SELECT',
@@ -499,15 +499,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     return;
                   }
 
-                 await provider.saveExpense(
+                  await provider.saveExpense(
                     amount: _amountController.text,
                     title: _titleController.text,
                     category: _selectedCategory,
                     paymentMethod: _selectedAccount,
                     date: selectedDate,
                   );
-
-                  
                 },
 
           child: Container(
