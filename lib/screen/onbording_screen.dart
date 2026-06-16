@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-
 // ------------------------------------------------------------------
 // 1. MAIN ONBOARDING CONTROLLER
 // ------------------------------------------------------------------
@@ -179,7 +178,7 @@ class BaseWaveScreen extends StatelessWidget {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
@@ -219,7 +218,7 @@ class BaseWaveScreen extends StatelessWidget {
       width: 8,
       height: 8,
       decoration: BoxDecoration(
-        color: const Color(0xFFFF9500).withOpacity(0.2),
+        color: const Color(0xFFFF9500).withValues(alpha: 0.2),
         shape: BoxShape.circle,
       ),
     );
@@ -231,7 +230,7 @@ class BaseWaveScreen extends StatelessWidget {
       height: 8,
       width: isActive ? 24 : 8,
       decoration: BoxDecoration(
-        color: isActive ? Colors.white : Colors.white.withOpacity(0.4),
+        color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(4),
       ),
     );
@@ -303,7 +302,7 @@ class WelcomeScreen extends StatelessWidget {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFF9500).withOpacity(0.15),
+                        color: const Color(0xFFFF9500).withValues(alpha: 0.15),
                         blurRadius: 50,
                         spreadRadius: 10,
                         offset: const Offset(0, 10),
@@ -323,7 +322,9 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFF5E3A).withOpacity(0.4),
+                            color: const Color(
+                              0xFFFF5E3A,
+                            ).withValues(alpha: 0.4),
                             blurRadius: 20,
                             offset: const Offset(0, 8),
                           ),
@@ -391,7 +392,7 @@ class WelcomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 20,
             spreadRadius: 2,
             offset: const Offset(0, 8),
@@ -404,7 +405,7 @@ class WelcomeScreen extends StatelessWidget {
 }
 
 // ------------------------------------------------------------------
-// 3. INCOME SCREEN
+// 3. INCOME SCREEN (PREMIUM UI UPDATE)
 // ------------------------------------------------------------------
 class IncomeScreen extends StatefulWidget {
   final Function(double) onNext;
@@ -418,6 +419,21 @@ class _IncomeScreenState extends State<IncomeScreen> {
   final TextEditingController _controller = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // টেক্সট ফিল্ডে ম্যানুয়ালি কিছু লিখলেও যেন চিপসগুলোর সিলেকশন আপডেট হয়
+    _controller.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BaseWaveScreen(
       pageIndex: 1,
@@ -426,67 +442,183 @@ class _IncomeScreenState extends State<IncomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            "Step 1 of 3",
-            style: TextStyle(
-              color: Color(0xFF8E8E93),
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
+          // Step Indicator
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFF10B981).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Text(
+              "Step 1 of 3",
+              style: TextStyle(
+                color: Color(0xFF059669),
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+                letterSpacing: 0.5,
+              ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
+
+          // Main Headline
           const Text(
             "What is your\nmonthly income?",
             style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.5,
-              height: 1.2,
-              color: Color(0xFF1C1C1E),
+              fontSize: 38,
+              fontWeight: FontWeight.w900,
+              letterSpacing: -1.0,
+              height: 1.15,
+              color: Color(0xFF0F172A), // Premium Dark Slate
             ),
           ),
           const SizedBox(height: 40),
 
+          // Premium Input Field
           _buildInputField(_controller, "e.g. 5000"),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
 
+          // Animated Suggestion Chips
+          const Text(
+            "Quick Select",
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF94A3B8), // Muted Slate
+              letterSpacing: 0.3,
+            ),
+          ),
+          const SizedBox(height: 12),
           Wrap(
             spacing: 12,
             runSpacing: 12,
-            children: ['3000', '5000', '10000']
-                .map(
-                  (val) => GestureDetector(
-                    onTap: () => setState(() => _controller.text = val),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: const Color(0xFFFF9500).withOpacity(0.3),
-                        ),
-                      ),
-                      child: Text(
-                        "₹$val",
-                        style: const TextStyle(
-                          color: Color(0xFFFF5E3A),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                        ),
-                      ),
+            children: ['3000', '5000', '10000'].map((val) {
+              bool isSelected = _controller.text == val;
+
+              return GestureDetector(
+                onTap: () {
+                  // Haptic feedback could be added here
+                  _controller.text = val;
+                  // Move cursor to the end
+                  _controller.selection = TextSelection.fromPosition(
+                    TextPosition(offset: _controller.text.length),
+                  );
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOutCubic,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected ? const Color(0xFF059669) : Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isSelected
+                          ? Colors.transparent
+                          : const Color(0xFFE2E8F0), // Very subtle grey border
+                      width: 1.5,
+                    ),
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: const Color(0xFF059669).withOpacity(0.3),
+                              blurRadius: 15,
+                              offset: const Offset(0, 6),
+                            ),
+                          ]
+                        : [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.02),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                  ),
+                  child: Text(
+                    "₹$val",
+                    style: TextStyle(
+                      color: isSelected
+                          ? Colors.white
+                          : const Color(0xFF475569),
+                      fontWeight: isSelected
+                          ? FontWeight.w800
+                          : FontWeight.w600,
+                      fontSize: 16,
+                      letterSpacing: 0.5,
                     ),
                   ),
-                )
-                .toList(),
+                ),
+              );
+            }).toList(),
           ),
-          const SizedBox(height: 150), // Spacer for wave
+          const SizedBox(height: 120), // Spacer for wave
         ],
       ),
     );
   }
+}
+
+// ------------------------------------------------------------------
+// PREMIUM HELPER FOR INPUT FIELDS
+// ------------------------------------------------------------------
+Widget _buildInputField(
+  TextEditingController controller,
+  String hint, {
+  Function(String)? onChanged,
+}) {
+  return Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(24), // Softer rounded corners
+      border: Border.all(
+        color: const Color(0xFFF1F5F9),
+        width: 2,
+      ), // Very subtle outline
+      boxShadow: [
+        BoxShadow(
+          color: const Color(0xFF0F172A).withOpacity(0.04), // Ultra soft shadow
+          blurRadius: 24,
+          spreadRadius: 0,
+          offset: const Offset(0, 10),
+        ),
+      ],
+    ),
+    child: TextField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      onChanged: onChanged,
+      style: const TextStyle(
+        fontSize: 32, // Slightly larger
+        fontWeight: FontWeight.w900,
+        color: Color(0xFF0F172A),
+        letterSpacing: 1.0,
+      ),
+      decoration: InputDecoration(
+        prefixIcon: const Padding(
+          padding: EdgeInsets.only(left: 24.0, right: 12.0),
+          child: Text(
+            "₹",
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF10B981), // Emerald green currency symbol
+            ),
+          ),
+        ),
+        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        border: InputBorder.none,
+        contentPadding: const EdgeInsets.symmetric(vertical: 24),
+        hintText: hint,
+        hintStyle: const TextStyle(
+          color: Color(0xFFCBD5E1), // Softer hint color
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.0,
+        ),
+      ),
+    ),
+  );
 }
 
 // ------------------------------------------------------------------
@@ -553,13 +685,13 @@ class _BudgetScreenState extends State<BudgetScreen> {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: savings >= 0
-                    ? const Color(0xFF34C759).withOpacity(0.3)
-                    : const Color(0xFFFF3B30).withOpacity(0.3),
+                    ? const Color(0xFF34C759).withValues(alpha: 0.3)
+                    : const Color(0xFFFF3B30).withValues(alpha: 0.3),
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
+                  color: Colors.black.withValues(alpha: 0.02),
                   blurRadius: 10,
                   offset: const Offset(0, 5),
                 ),
@@ -696,14 +828,16 @@ class _GoalScreenState extends State<GoalScreen> {
                       boxShadow: isActive
                           ? [
                               BoxShadow(
-                                color: const Color(0xFFFF5E3A).withOpacity(0.3),
+                                color: const Color(
+                                  0xFFFF5E3A,
+                                ).withValues(alpha: 0.3),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
                             ]
                           : [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
+                                color: Colors.black.withValues(alpha: 0.02),
                                 blurRadius: 10,
                               ),
                             ],
@@ -752,60 +886,6 @@ class _GoalScreenState extends State<GoalScreen> {
       ),
     );
   }
-}
-
-// ------------------------------------------------------------------
-// HELPER FOR INPUT FIELDS
-// ------------------------------------------------------------------
-Widget _buildInputField(
-  TextEditingController controller,
-  String hint, {
-  Function(String)? onChanged,
-}) {
-  return Container(
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.04),
-          blurRadius: 20,
-          offset: const Offset(0, 8),
-        ),
-      ],
-    ),
-    child: TextField(
-      controller: controller,
-      keyboardType: TextInputType.number,
-      onChanged: onChanged,
-      style: const TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.w800,
-        color: Color(0xFF1C1C1E),
-      ),
-      decoration: InputDecoration(
-        prefixIcon: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: Text(
-            "₹",
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFFFF9500),
-            ),
-          ),
-        ),
-        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-        border: InputBorder.none,
-        contentPadding: const EdgeInsets.symmetric(vertical: 24),
-        hintText: hint,
-        hintStyle: TextStyle(
-          color: Colors.grey.shade300,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    ),
-  );
 }
 
 // ------------------------------------------------------------------
@@ -860,7 +940,7 @@ class HomeDashboard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFF5E3A).withOpacity(0.3),
+                    color: const Color(0xFFFF5E3A).withValues(alpha: 0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -897,7 +977,7 @@ class HomeDashboard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.03),
+                    color: Colors.black.withValues(alpha: 0.03),
                     blurRadius: 15,
                   ),
                 ],
