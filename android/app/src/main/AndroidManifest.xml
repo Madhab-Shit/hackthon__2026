@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="hacathon_2026"
+        android:label="Greentrack"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
