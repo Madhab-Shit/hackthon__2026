@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hacathon_2026/screen/dashboard/dashboard.dart';
+import 'package:hacathon_2026/screen/profileScreen/profile_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -15,8 +16,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     DashboardScreen(),
     DashboardScreen(),
     DashboardScreen(),
-    DashboardScreen(),
-    DashboardScreen(),
+    ProfileScreen(),
   ];
 
   @override

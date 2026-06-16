@@ -3,12 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:hacathon_2026/screen/bottomNavigationBar/bottom_navigation.dart';
-import 'package:hacathon_2026/screen/onbording_screen.dart'; // GetX obossoi import korte hobe
+import 'package:hacathon_2026/screen/onbording_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool isLogin = true;
   bool isLoading = false;
   bool isPasswordVisible = false;
+
+  bool islogin = false;
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -83,6 +86,9 @@ class AuthProvider extends ChangeNotifier {
           email: email,
           password: password,
         );
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+      
         _showCustomPremiumSnackBar(
           title: "Welcome Back!",
           message: "Login Successful!",
