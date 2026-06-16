@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hacathon_2026/screen/dashboard/dashboard.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -11,6 +12,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
+    DashboardScreen()
     // const DashboardScreen(),
     // const RecordsScreen(),
     // const AnalyticsScreen(),
@@ -70,18 +72,14 @@ class CustomBottomNavBar extends StatelessWidget {
           _buildNavItem(
             index: 0,
             icon: Icons.space_dashboard_rounded,
-            label: 'Dashboard',
+            label: 'Home',
           ),
           _buildNavItem(
             index: 1,
             icon: Icons.receipt_long_rounded,
-            label: 'Records',
+            label: 'Expenses',
           ),
-          _buildNavItem(
-            index: 2,
-            icon: Icons.insights_rounded,
-            label: 'Analytics',
-          ),
+          _buildNavItem(index: 2, icon: Icons.insights_rounded, label: 'Goals'),
           _buildNavItem(
             index: 3,
             icon: Icons.person_outline_rounded,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart'; // GetX obossoi import korte hobe
+import 'package:get/get.dart';
+import 'package:hacathon_2026/screen/bottomNavigationBar/bottom_navigation.dart';
+import 'package:hacathon_2026/screen/onbording_screen.dart'; // GetX obossoi import korte hobe
 
 class AuthProvider extends ChangeNotifier {
   bool isLogin = true;
@@ -87,6 +89,7 @@ class AuthProvider extends ChangeNotifier {
           icon: Icons.check_circle_outline_rounded,
           backgroundColor: const Color(0xFF34C759), // Green Success
         );
+        Get.offAll(() => MainNavigationScreen());
         // TODO: Navigate to Home Screen
       } else {
         // --- SIGN UP ---
@@ -100,6 +103,7 @@ class AuthProvider extends ChangeNotifier {
           'email': email,
           'createdAt': FieldValue.serverTimestamp(),
         });
+        Get.offAll(() => OnboardingFlow());
 
         _showCustomPremiumSnackBar(
           title: "Welcome!",
