@@ -102,10 +102,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                           _buildMainBalanceCard(dashboardProvider),
 
-                          const SizedBox(height: 24),
+                          // const SizedBox(height: 24),
 
-                          _buildSmartInsightCard(dashboardProvider),
-
+                          // _buildSmartInsightCard(dashboardProvider),
                           const SizedBox(height: 24),
 
                           const Text(

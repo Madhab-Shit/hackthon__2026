@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +20,213 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ExpensesListProvider>().fetchExpenses();
     });
+  }
+
+  Future<void> _showDeleteExpenseDialog(
+    BuildContext context,
+    ExpensesListProvider provider,
+    Map<String, dynamic> expense,
+  ) async {
+    final String expenseId = expense['id']?.toString() ?? '';
+    final String title = expense['title']?.toString() ?? 'Expense';
+
+    if (expenseId.isEmpty) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Expense ID not found!"),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    final bool? confirm = await showGeneralDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "Delete Expense",
+      barrierColor: Colors.black.withOpacity(0.45),
+      transitionDuration: const Duration(milliseconds: 250),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return const SizedBox();
+      },
+      transitionBuilder: (dialogContext, animation, secondaryAnimation, child) {
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutBack,
+        );
+
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+          child: ScaleTransition(
+            scale: curvedAnimation,
+            child: FadeTransition(
+              opacity: animation,
+              child: Center(
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    width: MediaQuery.of(dialogContext).size.width * 0.86,
+                    padding: const EdgeInsets.all(22),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(28),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.18),
+                          blurRadius: 30,
+                          offset: const Offset(0, 14),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          height: 78,
+                          width: 78,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFFF6B6B), Color(0xFFFF2D55)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.redAccent.withOpacity(0.35),
+                                blurRadius: 18,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.delete_rounded,
+                            color: Colors.white,
+                            size: 38,
+                          ),
+                        ),
+
+                        const SizedBox(height: 18),
+
+                        const Text(
+                          "Delete Expense?",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF1E1E1E),
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        Text(
+                          'Are you sure you want to delete "$title"?',
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 14.5,
+                            height: 1.45,
+                            color: Colors.grey.shade600,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+
+                        const SizedBox(height: 26),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  side: BorderSide(color: Colors.grey.shade300),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(dialogContext).pop(false);
+                                },
+                                child: Text(
+                                  "Cancel",
+                                  style: TextStyle(
+                                    color: Colors.grey.shade700,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(width: 12),
+
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  backgroundColor: Colors.redAccent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(dialogContext).pop(true);
+                                },
+                                child: const Text(
+                                  "Delete",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    if (confirm != true) return;
+    if (!context.mounted) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+
+    final bool success = await provider.deleteExpense(expenseId);
+
+    if (!context.mounted) return;
+
+    messenger.showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        content: Text(
+          success
+              ? "Expense deleted successfully!"
+              : "Failed to delete expense!",
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: success ? Colors.green : Colors.redAccent,
+      ),
+    );
   }
 
   @override
@@ -42,9 +251,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
           ),
           body: provider.isLoading
               ? const Center(
-                  child: CircularProgressIndicator(
-                    color: Color(0xFFFF7B00),
-                  ),
+                  child: CircularProgressIndicator(color: Color(0xFFFF7B00)),
                 )
               : RefreshIndicator(
                   color: const Color(0xFFFF7B00),
@@ -89,9 +296,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                             final group = provider.expenseGroups[index - 1];
 
                             final List<Map<String, dynamic>> items =
-                                List<Map<String, dynamic>>.from(
-                              group['items'],
-                            );
+                                List<Map<String, dynamic>>.from(group['items']);
 
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +309,11 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                                   itemBuilder: (context, itemIndex) {
                                     final expense = items[itemIndex];
 
-                                    return _buildExpenseCard(expense);
+                                    return _buildExpenseCard(
+                                      context,
+                                      provider,
+                                      expense,
+                                    );
                                   },
                                 ),
                               ],
@@ -213,10 +422,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
           ),
 
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 5,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: const Color(0xFFFF7B00).withOpacity(0.12),
               borderRadius: BorderRadius.circular(20),
@@ -235,74 +441,80 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     );
   }
 
-  Widget _buildExpenseCard(Map<String, dynamic> expense) {
+  Widget _buildExpenseCard(
+    BuildContext context,
+    ExpensesListProvider provider,
+    Map<String, dynamic> expense,
+  ) {
     final double amount = expense['amount'] ?? 0.0;
     final String title = expense['title'] ?? 'Expense';
     final String category = expense['category'] ?? 'Other';
     final String timeText = expense['timeText'] ?? '';
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: const Color(0xFFF2F2F7),
-          width: 1.5,
+    return GestureDetector(
+      onLongPress: () {
+        _showDeleteExpenseDialog(context, provider, expense);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0xFFF2F2F7), width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.025),
+              blurRadius: 12,
+              offset: const Offset(0, 5),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.025),
-            blurRadius: 12,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          _buildCategoryIcon(category),
+        child: Row(
+          children: [
+            _buildCategoryIcon(category),
 
-          const SizedBox(width: 16),
+            const SizedBox(width: 16),
 
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 16,
-                    color: Color(0xFF1A1A1A),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                      color: Color(0xFF1A1A1A),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  timeText.isEmpty ? category : "$category • $timeText",
-                  style: TextStyle(
-                    color: Colors.grey.shade500,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                  const SizedBox(height: 5),
+                  Text(
+                    timeText.isEmpty ? category : "$category • $timeText",
+                    style: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
 
-          const SizedBox(width: 10),
+            const SizedBox(width: 10),
 
-          Text(
-            "-₹${amount.toStringAsFixed(0)}",
-            style: const TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: 16,
-              color: Color(0xFFE53935),
+            Text(
+              "-₹${amount.toStringAsFixed(0)}",
+              style: const TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 16,
+                color: Color(0xFFE53935),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -351,11 +563,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
         color: color.withOpacity(0.12),
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        icon,
-        color: color,
-        size: 24,
-      ),
+      child: Icon(icon, color: color, size: 24),
     );
   }
 }
