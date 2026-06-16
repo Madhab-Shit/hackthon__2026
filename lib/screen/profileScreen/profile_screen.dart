@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hacathon_2026/screen/helpcenter/helpcenter.dart';
 import 'package:hacathon_2026/screen/login%20screnn/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -180,45 +181,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icons.person_outline,
                 'Personal Information',
                 'Update your personal details',
+                () {},
               ),
-              _buildListItem(
-                Icons.lock_outline,
-                'Change Password',
-                'Update your account password',
-              ),
+
               _buildListItem(
                 Icons.security,
                 'Security Settings',
                 'Manage login and security options',
-              ),
-              _buildListItem(
-                Icons.devices,
-                'Devices',
-                'Manage your connected devices',
+                () {},
               ),
 
               const SizedBox(height: 20),
 
               // Preferences Section
-              _buildSectionHeader('Preferences'),
-              const SizedBox(height: 12),
-              _buildListItem(
-                Icons.notifications_none,
-                'Notifications',
-                'Manage your notification preferences',
-              ),
-              _buildListItem(
-                Icons.palette_outlined,
-                'Theme',
-                'Choose your app appearance',
-              ),
-              _buildListItem(
-                Icons.language,
-                'Language',
-                'Select your preferred language',
-              ),
+              // _buildSectionHeader('Preferences'),
+              // const SizedBox(height: 12),
+              // _buildListItem(
+              //   Icons.notifications_none,
+              //   'Notifications',
+              //   'Manage your notification preferences',
+              // ),
+              // _buildListItem(
+              //   Icons.palette_outlined,
+              //   'Theme',
+              //   'Choose your app appearance',
+              // ),
+              // _buildListItem(
+              //   Icons.language,
+              //   'Language',
+              //   'Select your preferred language',
+              // ),
 
-              const SizedBox(height: 20),
+              // const SizedBox(height: 20),
 
               // Support & More Section
               _buildSectionHeader('Support & More'),
@@ -227,16 +221,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icons.help_outline,
                 'Help Center',
                 'Get help and support',
+                () {
+                  Get.to(() => HelpCenterScreen());
+                },
               ),
               _buildListItem(
                 Icons.chat_bubble_outline,
                 'Contact Us',
                 "We're here to help you",
+                () {},
               ),
               _buildListItem(
                 Icons.description_outlined,
                 'Terms & Privacy',
                 'Read our terms and privacy policy',
+                () {},
               ),
 
               const SizedBox(height: 24),
@@ -476,39 +475,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildListItem(IconData icon, String title, String subtitle) {
+  Widget _buildListItem(
+    IconData icon,
+    String title,
+    String subtitle,
+    VoidCallback ontap,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: paleOrange,
-              borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: ontap,
+        borderRadius: BorderRadius.circular(12),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: paleOrange,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: primaryOrange, size: 22),
             ),
-            child: Icon(icon, color: primaryOrange, size: 22),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: textDark,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: textDark,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(subtitle, style: TextStyle(color: textGrey, fontSize: 12)),
-              ],
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(color: textGrey, fontSize: 12),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const Icon(Icons.chevron_right, color: Colors.grey, size: 22),
-        ],
+            const Icon(Icons.chevron_right, color: Colors.grey, size: 22),
+          ],
+        ),
       ),
     );
   }
