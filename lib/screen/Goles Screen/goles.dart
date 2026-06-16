@@ -27,7 +27,8 @@ class _ExpenseAnalyticsScreenState extends State<ExpenseAnalyticsScreen> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 247, 238),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color.fromARGB(255, 255, 247, 238),
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         iconTheme: const IconThemeData(color: Color(0xFF1A1A1A)),

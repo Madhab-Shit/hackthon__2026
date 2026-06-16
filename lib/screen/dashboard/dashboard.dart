@@ -206,6 +206,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         icon: const Icon(Icons.add_rounded, color: Colors.white, size: 24),
+        heroTag: null,
         label: const Text(
           "Add Expense",
           style: TextStyle(

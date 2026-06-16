@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:hacathon_2026/controller/expense_provider.dart';
 import 'package:hacathon_2026/screen/Goles%20Screen/goles.dart';
 import 'package:hacathon_2026/screen/dashboard/dashboard.dart';
 import 'package:hacathon_2026/screen/profileScreen/profile_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -14,14 +16,27 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
+  final List<Widget> _pages = const [
     DashboardScreen(),
+
+    // ekhane tomar actual Expenses screen thakle seta dao
+    // Example: ExpenseScreen(),
     DashboardScreen(),
+
     ExpenseAnalyticsScreen(),
     ProfileScreen(),
   ];
 
-  
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+
+    // index 2 holo Goals / Analytics tab
+    if (index == 2) {
+      context.read<GolesProvider>().fetchExpenses();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +47,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
       bottomNavigationBar: CustomBottomNavBar(
         selectedIndex: _currentIndex,
-        onItemTapped: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+        onItemTapped: _onTabTapped,
       ),
     );
   }
@@ -64,7 +75,7 @@ class CustomBottomNavBar extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withOpacity(0.04),
             blurRadius: 15,
             offset: const Offset(0, -5),
           ),
@@ -100,8 +111,8 @@ class CustomBottomNavBar extends StatelessWidget {
     required String label,
   }) {
     final bool isSelected = selectedIndex == index;
-    final Color activeColor = const Color(0xFFFF7A00);
-    final Color inactiveColor = const Color(0xFFC0C0D0);
+    const Color activeColor = Color(0xFFFF7A00);
+    const Color inactiveColor = Color(0xFFC0C0D0);
 
     return GestureDetector(
       onTap: () => onItemTapped(index),
