@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hacathon_2026/screen/Expenses%20all%20value/expenses_list.dart';
 import 'package:provider/provider.dart';
-
 import 'package:hacathon_2026/controller/expense_provider.dart';
 import 'package:hacathon_2026/screen/Goles%20Screen/goles.dart';
 import 'package:hacathon_2026/screen/dashboard/dashboard.dart';
@@ -18,11 +18,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   final List<Widget> _pages = const [
     DashboardScreen(),
-
-    // ekhane tomar actual Expenses screen thakle seta dao
-    // Example: ExpenseScreen(),
-    DashboardScreen(),
-
+    ExpensesScreen(),
     ExpenseAnalyticsScreen(),
     ProfileScreen(),
   ];
