@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hacathon_2026/controller/Onboardingcontroller.dart';
+import 'package:provider/provider.dart';
 
 // ------------------------------------------------------------------
 // 1. MAIN ONBOARDING CONTROLLER
@@ -393,123 +395,130 @@ class _IncomeScreenState extends State<IncomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.read<OnboardingProvider>();
     return BaseScreen(
-      onNext: () => widget.onNext(double.tryParse(_controller.text) ?? 0),
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Step Indicator
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFF10B981).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              "Step 1 of 3",
-              style: TextStyle(
-                color: Color(0xFF059669),
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-                letterSpacing: 0.5,
+      onNext: () {
+        provider.setIncome(double.tryParse(_controller.text) ?? 0);
+      },
+      content: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 50),
+            // Step Indicator
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFF10B981).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text(
+                "Step 1 of 3",
+                style: TextStyle(
+                  color: Color(0xFF059669),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  letterSpacing: 0.5,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          // Main Headline
-          const Text(
-            "What is your\nmonthly income?",
-            style: TextStyle(
-              fontSize: 38,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -1.0,
-              height: 1.15,
-              color: Color(0xFF0F172A),
+            // Main Headline
+            const Text(
+              "What is your\nmonthly income?",
+              style: TextStyle(
+                fontSize: 38,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -1.0,
+                height: 1.15,
+                color: Color(0xFF0F172A),
+              ),
             ),
-          ),
-          const SizedBox(height: 40),
+            const SizedBox(height: 40),
 
-          // Premium Input Field
-          _buildInputField(_controller, "e.g. 5000"),
-          const SizedBox(height: 32),
+            // Premium Input Field
+            _buildInputField(_controller, "e.g. 5000"),
+            const SizedBox(height: 32),
 
-          // Animated Suggestion Chips
-          const Text(
-            "Quick Select",
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF94A3B8),
-              letterSpacing: 0.3,
+            // Animated Suggestion Chips
+            const Text(
+              "Quick Select",
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF94A3B8),
+                letterSpacing: 0.3,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: ['3000', '5000', '10000'].map((val) {
-              bool isSelected = _controller.text == val;
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: ['3000', '5000', '10000'].map((val) {
+                bool isSelected = _controller.text == val;
 
-              return GestureDetector(
-                onTap: () {
-                  _controller.text = val;
-                  _controller.selection = TextSelection.fromPosition(
-                    TextPosition(offset: _controller.text.length),
-                  );
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  curve: Curves.easeOutCubic,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFF059669) : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isSelected
-                          ? Colors.transparent
-                          : const Color(0xFFE2E8F0),
-                      width: 1.5,
+                return GestureDetector(
+                  onTap: () {
+                    _controller.text = val;
+                    _controller.selection = TextSelection.fromPosition(
+                      TextPosition(offset: _controller.text.length),
+                    );
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeOutCubic,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
                     ),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: const Color(0xFF059669).withOpacity(0.3),
-                              blurRadius: 15,
-                              offset: const Offset(0, 6),
-                            ),
-                          ]
-                        : [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.02),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                  ),
-                  child: Text(
-                    "₹$val",
-                    style: TextStyle(
+                    decoration: BoxDecoration(
                       color: isSelected
-                          ? Colors.white
-                          : const Color(0xFF475569),
-                      fontWeight: isSelected
-                          ? FontWeight.w800
-                          : FontWeight.w600,
-                      fontSize: 16,
-                      letterSpacing: 0.5,
+                          ? const Color(0xFF059669)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isSelected
+                            ? Colors.transparent
+                            : const Color(0xFFE2E8F0),
+                        width: 1.5,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: const Color(0xFF059669).withOpacity(0.3),
+                                blurRadius: 15,
+                                offset: const Offset(0, 6),
+                              ),
+                            ]
+                          : [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                    ),
+                    child: Text(
+                      "₹$val",
+                      style: TextStyle(
+                        color: isSelected
+                            ? Colors.white
+                            : const Color(0xFF475569),
+                        fontWeight: isSelected
+                            ? FontWeight.w800
+                            : FontWeight.w600,
+                        fontSize: 16,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ),
-                ),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 80), // To clear bottom button
-        ],
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 80), // To clear bottom button
+          ],
+        ),
       ),
     );
   }
@@ -595,99 +604,102 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
     return BaseScreen(
       onNext: () => widget.onNext(budget),
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            "Step 2 of 3",
-            style: TextStyle(
-              color: Color(0xFF8E8E93),
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            "How much do you\nwant to spend?",
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.5,
-              height: 1.2,
-              color: Color(0xFF1C1C1E),
-            ),
-          ),
-          const SizedBox(height: 40),
-
-          _buildInputField(
-            _controller,
-            "e.g. 4000",
-            onChanged: (val) =>
-                setState(() => budget = double.tryParse(val) ?? 0),
-          ),
-          const SizedBox(height: 30),
-
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: savings >= 0
-                    ? const Color(0xFF34C759).withOpacity(0.3)
-                    : const Color(0xFFFF3B30).withOpacity(0.3),
-                width: 2,
+      content: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 50),
+            const Text(
+              "Step 2 of 3",
+              style: TextStyle(
+                color: Color(0xFF8E8E93),
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
-                ),
-              ],
             ),
-            child: Row(
-              children: [
-                Icon(
-                  savings >= 0
-                      ? Icons.check_circle_rounded
-                      : Icons.error_rounded,
+            const SizedBox(height: 12),
+            const Text(
+              "How much do you\nwant to spend?",
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+                height: 1.2,
+                color: Color(0xFF1C1C1E),
+              ),
+            ),
+            const SizedBox(height: 40),
+
+            _buildInputField(
+              _controller,
+              "e.g. 4000",
+              onChanged: (val) =>
+                  setState(() => budget = double.tryParse(val) ?? 0),
+            ),
+            const SizedBox(height: 30),
+
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
                   color: savings >= 0
-                      ? const Color(0xFF34C759)
-                      : const Color(0xFFFF3B30),
-                  size: 28,
+                      ? const Color(0xFF34C759).withOpacity(0.3)
+                      : const Color(0xFFFF3B30).withOpacity(0.3),
+                  width: 2,
                 ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Potential Savings",
-                      style: TextStyle(
-                        color: Color(0xFF8E8E93),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    savings >= 0
+                        ? Icons.check_circle_rounded
+                        : Icons.error_rounded,
+                    color: savings >= 0
+                        ? const Color(0xFF34C759)
+                        : const Color(0xFFFF3B30),
+                    size: 28,
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Potential Savings",
+                        style: TextStyle(
+                          color: Color(0xFF8E8E93),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "₹${savings.toStringAsFixed(0)}",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
-                        color: savings >= 0
-                            ? const Color(0xFF1C1C1E)
-                            : const Color(0xFFFF3B30),
+                      Text(
+                        "₹${savings.toStringAsFixed(0)}",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          color: savings >= 0
+                              ? const Color(0xFF1C1C1E)
+                              : const Color(0xFFFF3B30),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 80), // To clear bottom button
-        ],
+            const SizedBox(height: 80), // To clear bottom button
+          ],
+        ),
       ),
     );
   }
@@ -726,9 +738,10 @@ class _GoalScreenState extends State<GoalScreen> {
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+            // SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+            SizedBox(height: 50),
             const Text(
               "Step 3 of 3",
               style: TextStyle(
