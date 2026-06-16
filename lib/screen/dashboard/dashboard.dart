@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hacathon_2026/controller/dashbord_controller.dart';
 import 'package:hacathon_2026/screen/add%20Expense/add_expese.dart';
+import 'package:provider/provider.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -536,39 +538,11 @@ void showPremiumGoalDialog(BuildContext context) {
   );
 }
 
-class PremiumGoalDialog extends StatefulWidget {
+class PremiumGoalDialog extends StatelessWidget {
   const PremiumGoalDialog({super.key});
 
-  @override
-  State<PremiumGoalDialog> createState() => _PremiumGoalDialogState();
-}
-
-class _PremiumGoalDialogState extends State<PremiumGoalDialog> {
   final Color primaryOrange = Colors.orange;
   final Color darkBrownText = const Color(0xFF4A3B32);
-
-  final TextEditingController _incomeController = TextEditingController();
-  final TextEditingController _budgetController = TextEditingController();
-  final TextEditingController _targetController = TextEditingController();
-  final TextEditingController _customGoalController = TextEditingController();
-
-  final List<String> _predefinedGoals = [
-    "New Phone",
-    "Laptop",
-    "Course",
-    "Bike",
-    "Other",
-  ];
-  String _selectedGoal = "New Phone";
-
-  @override
-  void dispose() {
-    _incomeController.dispose();
-    _budgetController.dispose();
-    _targetController.dispose();
-    _customGoalController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -579,170 +553,174 @@ class _PremiumGoalDialogState extends State<PremiumGoalDialog> {
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: SingleChildScrollView(
         child: Stack(
-          // Stack ব্যবহার করা হয়েছে যাতে উপরে (X) বাটন বসানো যায়
           clipBehavior: Clip.none,
           children: [
             Padding(
               padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 10),
-                  Center(
-                    child: Text(
-                      "Set Your Goals! 🎯",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: darkBrownText,
+              // Consumer যোগ করা হলো
+              child: Consumer<GoalProvider>(
+                builder: (context, goalProvider, child) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      Center(
+                        child: Text(
+                          "Set Your Goals! 🎯",
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: darkBrownText,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Center(
-                    child: Text(
-                      "Plan your monthly budget and save for your dream.",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey.shade500,
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(height: 8),
+                      Center(
+                        child: Text(
+                          "Plan your monthly budget and save for your dream.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade500,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                  _buildLabel("Monthly Income"),
-                  _buildTextField(
-                    controller: _incomeController,
-                    hintText: "e.g. 5000",
-                    icon: Icons.account_balance_wallet_rounded,
-                  ),
-                  const SizedBox(height: 16),
-
-                  _buildLabel("Monthly Budget"),
-                  _buildTextField(
-                    controller: _budgetController,
-                    hintText: "e.g. 4000",
-                    icon: Icons.pie_chart_rounded,
-                  ),
-                  const SizedBox(height: 20),
-
-                  _buildLabel("Select Your Goal"),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: _predefinedGoals.map((goal) {
-                      bool isSelected = _selectedGoal == goal;
-                      return ChoiceChip(
-                        label: Text(goal),
-                        selected: isSelected,
-                        selectedColor: primaryOrange.withOpacity(0.15),
-                        backgroundColor: Colors.grey.shade100,
-                        labelStyle: TextStyle(
-                          color: isSelected
-                              ? primaryOrange
-                              : Colors.grey.shade600,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.w500,
-                        ),
-                        side: BorderSide(
-                          color: isSelected
-                              ? primaryOrange
-                              : Colors.transparent,
-                          width: 1.5,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        onSelected: (selected) {
-                          if (selected) {
-                            setState(() {
-                              _selectedGoal = goal;
-                            });
-                          }
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 16),
-
-                  if (_selectedGoal == "Other") ...[
-                    _buildTextField(
-                      controller: _customGoalController,
-                      hintText: "Type your custom goal",
-                      icon: Icons.edit_rounded,
-                      isNumeric: false,
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-
-                  _buildLabel("Target Amount"),
-                  _buildTextField(
-                    controller: _targetController,
-                    hintText: "e.g. 10000",
-                    icon: Icons.track_changes_rounded,
-                  ),
-                  const SizedBox(height: 32),
-
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryOrange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        elevation: 4,
-                        shadowColor: primaryOrange.withOpacity(0.5),
+                      _buildLabel("Monthly Income"),
+                      _buildTextField(
+                        controller: goalProvider.incomeController,
+                        hintText: "e.g. 5000",
+                        icon: Icons.account_balance_wallet_rounded,
                       ),
-                      onPressed: () {
-                        // --- Validation Logic ---
-                        if (_incomeController.text.isEmpty ||
-                            _budgetController.text.isEmpty ||
-                            _targetController.text.isEmpty ||
-                            (_selectedGoal == "Other" &&
-                                _customGoalController.text.isEmpty)) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                "Please fill all the required fields!",
-                              ),
-                              backgroundColor: Colors.redAccent,
+                      const SizedBox(height: 16),
+
+                      _buildLabel("Monthly Budget"),
+                      _buildTextField(
+                        controller: goalProvider.budgetController,
+                        hintText: "e.g. 4000",
+                        icon: Icons.pie_chart_rounded,
+                      ),
+                      const SizedBox(height: 20),
+
+                      _buildLabel("Select Your Goal"),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: goalProvider.predefinedGoals.map((goal) {
+                          bool isSelected = goalProvider.selectedGoal == goal;
+                          return ChoiceChip(
+                            label: Text(goal),
+                            selected: isSelected,
+                            selectedColor: primaryOrange.withOpacity(0.15),
+                            backgroundColor: Colors.grey.shade100,
+                            labelStyle: TextStyle(
+                              color: isSelected
+                                  ? primaryOrange
+                                  : Colors.grey.shade600,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.w500,
                             ),
+                            side: BorderSide(
+                              color: isSelected
+                                  ? primaryOrange
+                                  : Colors.transparent,
+                              width: 1.5,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            onSelected: (selected) {
+                              if (selected) {
+                                goalProvider.setSelectedGoal(goal);
+                              }
+                            },
                           );
-                          return;
-                        }
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 16),
 
-                        // Data Save Logic Here
-                        String finalGoal = _selectedGoal == "Other"
-                            ? _customGoalController.text
-                            : _selectedGoal;
+                      if (goalProvider.selectedGoal == "Other") ...[
+                        _buildTextField(
+                          controller: goalProvider.customGoalController,
+                          hintText: "Type your custom goal",
+                          icon: Icons.edit_rounded,
+                          isNumeric: false,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
 
-                        print("Income: ${_incomeController.text}");
-                        print("Budget: ${_budgetController.text}");
-                        print("Goal: $finalGoal");
-                        print("Target: ${_targetController.text}");
+                      _buildLabel("Target Amount"),
+                      _buildTextField(
+                        controller: goalProvider.targetController,
+                        hintText: "e.g. 10000",
+                        icon: Icons.track_changes_rounded,
+                      ),
+                      const SizedBox(height: 32),
 
-                        // সব ঠিক থাকলে ডায়লগটি বন্ধ হবে
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        "Save & Continue",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryOrange,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 4,
+                            shadowColor: primaryOrange.withOpacity(0.5),
+                          ),
+                          onPressed: goalProvider.isLoading
+                              ? null // লোডিং অবস্থায় বাটন ডিসেবল থাকবে
+                              : () async {
+                                  bool success = await goalProvider
+                                      .saveGoalToFirebase();
+
+                                  if (!success && context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          "Please fill all required fields!",
+                                        ),
+                                        backgroundColor: Colors.redAccent,
+                                      ),
+                                    );
+                                  } else if (success && context.mounted) {
+                                    goalProvider
+                                        .clearControllers(); // সেভ হওয়ার পর ফর্ম ক্লিয়ার
+                                    Navigator.pop(context); // ডায়লগ বন্ধ করা
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          "Goal Saved Successfully!",
+                                        ),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                  }
+                                },
+                          child: goalProvider.isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : const Text(
+                                  "Save & Continue",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               ),
             ),
 
@@ -762,7 +740,8 @@ class _PremiumGoalDialogState extends State<PremiumGoalDialog> {
                     color: Colors.grey,
                   ),
                   onPressed: () {
-                    // বাটনে ক্লিক করলে ডায়লগ কেটে যাবে
+                    // বাটনে ক্লিক করলে ডায়লগ কেটে যাবে এবং ফর্ম ক্লিয়ার হবে
+                    context.read<GoalProvider>().clearControllers();
                     Navigator.pop(context);
                   },
                 ),
