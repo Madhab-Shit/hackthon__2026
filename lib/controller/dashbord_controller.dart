@@ -15,7 +15,7 @@ class GoalProvider extends ChangeNotifier {
     "Bike",
     "Other",
   ];
-  
+
   String _selectedGoal = "New Phone";
   String get selectedGoal => _selectedGoal;
 
@@ -47,21 +47,24 @@ class GoalProvider extends ChangeNotifier {
 
       // Current Logged-in User ID বের করা
       User? currentUser = FirebaseAuth.instance.currentUser;
-      
+
       if (currentUser != null) {
         // ইউজারের নির্দিষ্ট Document ID তে ডেটা সেভ করা
         await FirebaseFirestore.instance
             .collection('users')
             .doc(currentUser.uid) // Logged in user's doc id
             .collection('goals')
-            .doc('premium_goal') // অথবা তুমি চাইলে random ID ও জেনারেট করতে পারো .doc() দিয়ে
-            .set({
-          'income': double.tryParse(incomeController.text) ?? 0.0,
-          'budget': double.tryParse(budgetController.text) ?? 0.0,
-          'target_amount': double.tryParse(targetController.text) ?? 0.0,
-          'goal_name': finalGoal,
-          'created_at': FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true)); // merge: true দিলে আগের ডেটা রিপ্লেস না হয়ে আপডেট হবে
+            .doc() // অথবা তুমি চাইলে random ID ও জেনারেট করতে পারো .doc() দিয়ে
+            .set(
+              {
+                'income': double.tryParse(incomeController.text) ?? 0.0,
+                'budget': double.tryParse(budgetController.text) ?? 0.0,
+                'target_amount': double.tryParse(targetController.text) ?? 0.0,
+                'goal_name': finalGoal,
+                'created_at': FieldValue.serverTimestamp(),
+              },
+              SetOptions(merge: true),
+            ); // merge: true দিলে আগের ডেটা রিপ্লেস না হয়ে আপডেট হবে
       }
 
       _isLoading = false;

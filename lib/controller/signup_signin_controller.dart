@@ -90,13 +90,13 @@ class AuthProvider extends ChangeNotifier {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
 
+        Get.offAll(() => MainNavigationScreen());
         _showCustomPremiumSnackBar(
           title: "Welcome Back!",
           message: "Login Successful!",
           icon: Icons.check_circle_outline_rounded,
           backgroundColor: const Color(0xFF34C759), // Green Success
         );
-        Get.offAll(() => MainNavigationScreen());
         // TODO: Navigate to Home Screen
       } else {
         // --- SIGN UP ---
