@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hacathon_2026/controller/Onboardingcontroller.dart';
+import 'package:provider/provider.dart';
 
 // ------------------------------------------------------------------
 // 1. MAIN ONBOARDING CONTROLLER
@@ -51,7 +53,6 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
         physics: const NeverScrollableScrollPhysics(), // Disable manual swipe
         onPageChanged: (index) => setState(() => _currentPage = index),
         children: [
-          WelcomeScreen(onNext: _nextPage),
           IncomeScreen(
             onNext: (val) {
               setState(() => income = val);
@@ -81,20 +82,18 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
 }
 
 // ------------------------------------------------------------------
-// REUSABLE BASE SCREEN (Maintains the Wave UI for all screens)
+// REUSABLE BASE SCREEN (Clean UI with Bottom Button)
 // ------------------------------------------------------------------
-class BaseWaveScreen extends StatelessWidget {
+class BaseScreen extends StatelessWidget {
   final Widget content;
   final VoidCallback onNext;
   final String buttonText;
-  final int pageIndex; // 0: Welcome, 1: Income, 2: Budget, 3: Goal
 
-  const BaseWaveScreen({
+  const BaseScreen({
     super.key,
     required this.content,
     required this.onNext,
     this.buttonText = "Next",
-    required this.pageIndex,
   });
 
   @override
@@ -130,79 +129,57 @@ class BaseWaveScreen extends StatelessWidget {
             ),
           ),
 
-          // Bottom Orange Wave
+          // Bottom Navigation Button
           Align(
             alignment: Alignment.bottomCenter,
-            child: ClipPath(
-              clipper: BottomWaveClipper(),
-              child: Container(
-                height: size.height * 0.25,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFFF9500), Color(0xFFFF5E3A)],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 30.0,
+                  right: 30.0,
+                  bottom: 24.0,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 40.0,
-                    left: 32.0,
-                    right: 32.0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      const SizedBox(width: 60), // Spacer
-                      // Page Indicators
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(4, (index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4.0,
-                            ),
-                            child: _buildPageIndicator(index == pageIndex),
-                          );
-                        }),
-                      ),
-
-                      // Next Button
-                      GestureDetector(
-                        onTap: onNext,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                buttonText,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: -0.3,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              const Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                            ],
+                child: GestureDetector(
+                  onTap: onNext,
+                  child: Container(
+                    width: double.infinity,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      // gradient: const LinearGradient(
+                      //   colors: [Color(0xFFFF9500), Color(0xFFFF5E3A)],
+                      //   begin: Alignment.centerLeft,
+                      //   end: Alignment.centerRight,
+                      // ),
+                      color: Color(0xffFF7B00),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFFF5E3A).withOpacity(0.3),
+                          blurRadius: 15,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          buttonText,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        const Icon(
+                          Icons.arrow_forward_rounded,
+                          color: Colors.white,
+                          size: 22,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -218,27 +195,15 @@ class BaseWaveScreen extends StatelessWidget {
       width: 8,
       height: 8,
       decoration: BoxDecoration(
-        color: const Color(0xFFFF9500).withValues(alpha: 0.2),
+        color: const Color(0xFFFF9500).withOpacity(0.2),
         shape: BoxShape.circle,
-      ),
-    );
-  }
-
-  Widget _buildPageIndicator(bool isActive) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      height: 8,
-      width: isActive ? 24 : 8,
-      decoration: BoxDecoration(
-        color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(4),
       ),
     );
   }
 }
 
 // ------------------------------------------------------------------
-// 2. WELCOME SCREEN (Original UI logic wrapped in BaseWaveScreen)
+// 2. WELCOME SCREEN
 // ------------------------------------------------------------------
 class WelcomeScreen extends StatelessWidget {
   final VoidCallback onNext;
@@ -248,9 +213,8 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return BaseWaveScreen(
-      pageIndex: 0,
-      buttonText: "Start",
+    return BaseScreen(
+      buttonText: "Start Journey",
       onNext: onNext,
       content: Stack(
         children: [
@@ -291,7 +255,6 @@ class WelcomeScreen extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: size.height * 0.05),
               // Main Glowing Logo
               Center(
                 child: Container(
@@ -302,7 +265,7 @@ class WelcomeScreen extends StatelessWidget {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFF9500).withValues(alpha: 0.15),
+                        color: const Color(0xFFFF9500).withOpacity(0.15),
                         blurRadius: 50,
                         spreadRadius: 10,
                         offset: const Offset(0, 10),
@@ -322,9 +285,7 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(
-                              0xFFFF5E3A,
-                            ).withValues(alpha: 0.4),
+                            color: const Color(0xFFFF5E3A).withOpacity(0.4),
                             blurRadius: 20,
                             offset: const Offset(0, 8),
                           ),
@@ -376,7 +337,7 @@ class WelcomeScreen extends StatelessWidget {
                   letterSpacing: -0.2,
                 ),
               ),
-              SizedBox(height: size.height * 0.20), // Space for wave
+              const SizedBox(height: 80), // To clear bottom button
             ],
           ),
         ],
@@ -392,7 +353,7 @@ class WelcomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withOpacity(0.04),
             blurRadius: 20,
             spreadRadius: 2,
             offset: const Offset(0, 8),
@@ -405,7 +366,7 @@ class WelcomeScreen extends StatelessWidget {
 }
 
 // ------------------------------------------------------------------
-// 3. INCOME SCREEN (PREMIUM UI UPDATE)
+// 3. INCOME SCREEN
 // ------------------------------------------------------------------
 class IncomeScreen extends StatefulWidget {
   final Function(double) onNext;
@@ -421,7 +382,6 @@ class _IncomeScreenState extends State<IncomeScreen> {
   @override
   void initState() {
     super.initState();
-    // টেক্সট ফিল্ডে ম্যানুয়ালি কিছু লিখলেও যেন চিপসগুলোর সিলেকশন আপডেট হয়
     _controller.addListener(() {
       setState(() {});
     });
@@ -435,126 +395,130 @@ class _IncomeScreenState extends State<IncomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseWaveScreen(
-      pageIndex: 1,
-      onNext: () => widget.onNext(double.tryParse(_controller.text) ?? 0),
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Step Indicator
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFF10B981).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              "Step 1 of 3",
-              style: TextStyle(
-                color: Color(0xFF059669),
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-                letterSpacing: 0.5,
+    final provider = context.read<OnboardingProvider>();
+    return BaseScreen(
+      onNext: () {
+        provider.setIncome(double.tryParse(_controller.text) ?? 0);
+      },
+      content: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 50),
+            // Step Indicator
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFF10B981).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text(
+                "Step 1 of 3",
+                style: TextStyle(
+                  color: Color(0xFF059669),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  letterSpacing: 0.5,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          // Main Headline
-          const Text(
-            "What is your\nmonthly income?",
-            style: TextStyle(
-              fontSize: 38,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -1.0,
-              height: 1.15,
-              color: Color(0xFF0F172A), // Premium Dark Slate
+            // Main Headline
+            const Text(
+              "What is your\nmonthly income?",
+              style: TextStyle(
+                fontSize: 38,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -1.0,
+                height: 1.15,
+                color: Color(0xFF0F172A),
+              ),
             ),
-          ),
-          const SizedBox(height: 40),
+            const SizedBox(height: 40),
 
-          // Premium Input Field
-          _buildInputField(_controller, "e.g. 5000"),
-          const SizedBox(height: 32),
+            // Premium Input Field
+            _buildInputField(_controller, "e.g. 5000"),
+            const SizedBox(height: 32),
 
-          // Animated Suggestion Chips
-          const Text(
-            "Quick Select",
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF94A3B8), // Muted Slate
-              letterSpacing: 0.3,
+            // Animated Suggestion Chips
+            const Text(
+              "Quick Select",
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF94A3B8),
+                letterSpacing: 0.3,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: ['3000', '5000', '10000'].map((val) {
-              bool isSelected = _controller.text == val;
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: ['3000', '5000', '10000'].map((val) {
+                bool isSelected = _controller.text == val;
 
-              return GestureDetector(
-                onTap: () {
-                  // Haptic feedback could be added here
-                  _controller.text = val;
-                  // Move cursor to the end
-                  _controller.selection = TextSelection.fromPosition(
-                    TextPosition(offset: _controller.text.length),
-                  );
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  curve: Curves.easeOutCubic,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFF059669) : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isSelected
-                          ? Colors.transparent
-                          : const Color(0xFFE2E8F0), // Very subtle grey border
-                      width: 1.5,
+                return GestureDetector(
+                  onTap: () {
+                    _controller.text = val;
+                    _controller.selection = TextSelection.fromPosition(
+                      TextPosition(offset: _controller.text.length),
+                    );
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeOutCubic,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
                     ),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: const Color(0xFF059669).withOpacity(0.3),
-                              blurRadius: 15,
-                              offset: const Offset(0, 6),
-                            ),
-                          ]
-                        : [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.02),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                  ),
-                  child: Text(
-                    "₹$val",
-                    style: TextStyle(
+                    decoration: BoxDecoration(
                       color: isSelected
-                          ? Colors.white
-                          : const Color(0xFF475569),
-                      fontWeight: isSelected
-                          ? FontWeight.w800
-                          : FontWeight.w600,
-                      fontSize: 16,
-                      letterSpacing: 0.5,
+                          ? const Color(0xFF059669)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isSelected
+                            ? Colors.transparent
+                            : const Color(0xFFE2E8F0),
+                        width: 1.5,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: const Color(0xFF059669).withOpacity(0.3),
+                                blurRadius: 15,
+                                offset: const Offset(0, 6),
+                              ),
+                            ]
+                          : [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                    ),
+                    child: Text(
+                      "₹$val",
+                      style: TextStyle(
+                        color: isSelected
+                            ? Colors.white
+                            : const Color(0xFF475569),
+                        fontWeight: isSelected
+                            ? FontWeight.w800
+                            : FontWeight.w600,
+                        fontSize: 16,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ),
-                ),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 120), // Spacer for wave
-        ],
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 80), // To clear bottom button
+          ],
+        ),
       ),
     );
   }
@@ -571,14 +535,11 @@ Widget _buildInputField(
   return Container(
     decoration: BoxDecoration(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(24), // Softer rounded corners
-      border: Border.all(
-        color: const Color(0xFFF1F5F9),
-        width: 2,
-      ), // Very subtle outline
+      borderRadius: BorderRadius.circular(24),
+      border: Border.all(color: const Color(0xFFF1F5F9), width: 2),
       boxShadow: [
         BoxShadow(
-          color: const Color(0xFF0F172A).withOpacity(0.04), // Ultra soft shadow
+          color: const Color(0xFF0F172A).withOpacity(0.04),
           blurRadius: 24,
           spreadRadius: 0,
           offset: const Offset(0, 10),
@@ -590,7 +551,7 @@ Widget _buildInputField(
       keyboardType: TextInputType.number,
       onChanged: onChanged,
       style: const TextStyle(
-        fontSize: 32, // Slightly larger
+        fontSize: 32,
         fontWeight: FontWeight.w900,
         color: Color(0xFF0F172A),
         letterSpacing: 1.0,
@@ -603,7 +564,7 @@ Widget _buildInputField(
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF10B981), // Emerald green currency symbol
+              color: Color(0xFF10B981),
             ),
           ),
         ),
@@ -612,7 +573,7 @@ Widget _buildInputField(
         contentPadding: const EdgeInsets.symmetric(vertical: 24),
         hintText: hint,
         hintStyle: const TextStyle(
-          color: Color(0xFFCBD5E1), // Softer hint color
+          color: Color(0xFFCBD5E1),
           fontWeight: FontWeight.w600,
           letterSpacing: 1.0,
         ),
@@ -641,102 +602,104 @@ class _BudgetScreenState extends State<BudgetScreen> {
   Widget build(BuildContext context) {
     double savings = widget.income - budget;
 
-    return BaseWaveScreen(
-      pageIndex: 2,
+    return BaseScreen(
       onNext: () => widget.onNext(budget),
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            "Step 2 of 3",
-            style: TextStyle(
-              color: Color(0xFF8E8E93),
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            "How much do you\nwant to spend?",
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.5,
-              height: 1.2,
-              color: Color(0xFF1C1C1E),
-            ),
-          ),
-          const SizedBox(height: 40),
-
-          _buildInputField(
-            _controller,
-            "e.g. 4000",
-            onChanged: (val) =>
-                setState(() => budget = double.tryParse(val) ?? 0),
-          ),
-          const SizedBox(height: 30),
-
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: savings >= 0
-                    ? const Color(0xFF34C759).withValues(alpha: 0.3)
-                    : const Color(0xFFFF3B30).withValues(alpha: 0.3),
-                width: 2,
+      content: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 50),
+            const Text(
+              "Step 2 of 3",
+              style: TextStyle(
+                color: Color(0xFF8E8E93),
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.02),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
-                ),
-              ],
             ),
-            child: Row(
-              children: [
-                Icon(
-                  savings >= 0
-                      ? Icons.check_circle_rounded
-                      : Icons.error_rounded,
+            const SizedBox(height: 12),
+            const Text(
+              "How much do you\nwant to spend?",
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+                height: 1.2,
+                color: Color(0xFF1C1C1E),
+              ),
+            ),
+            const SizedBox(height: 40),
+
+            _buildInputField(
+              _controller,
+              "e.g. 4000",
+              onChanged: (val) =>
+                  setState(() => budget = double.tryParse(val) ?? 0),
+            ),
+            const SizedBox(height: 30),
+
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
                   color: savings >= 0
-                      ? const Color(0xFF34C759)
-                      : const Color(0xFFFF3B30),
-                  size: 28,
+                      ? const Color(0xFF34C759).withOpacity(0.3)
+                      : const Color(0xFFFF3B30).withOpacity(0.3),
+                  width: 2,
                 ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Potential Savings",
-                      style: TextStyle(
-                        color: Color(0xFF8E8E93),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    savings >= 0
+                        ? Icons.check_circle_rounded
+                        : Icons.error_rounded,
+                    color: savings >= 0
+                        ? const Color(0xFF34C759)
+                        : const Color(0xFFFF3B30),
+                    size: 28,
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Potential Savings",
+                        style: TextStyle(
+                          color: Color(0xFF8E8E93),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "₹${savings.toStringAsFixed(0)}",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
-                        color: savings >= 0
-                            ? const Color(0xFF1C1C1E)
-                            : const Color(0xFFFF3B30),
+                      Text(
+                        "₹${savings.toStringAsFixed(0)}",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          color: savings >= 0
+                              ? const Color(0xFF1C1C1E)
+                              : const Color(0xFFFF3B30),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 120),
-        ],
+            const SizedBox(height: 80), // To clear bottom button
+          ],
+        ),
       ),
     );
   }
@@ -766,8 +729,7 @@ class _GoalScreenState extends State<GoalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseWaveScreen(
-      pageIndex: 3,
+    return BaseScreen(
       buttonText: "Finish",
       onNext: () => widget.onComplete(
         selectedGoal,
@@ -776,9 +738,10 @@ class _GoalScreenState extends State<GoalScreen> {
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+            // SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+            SizedBox(height: 50),
             const Text(
               "Step 3 of 3",
               style: TextStyle(
@@ -828,16 +791,14 @@ class _GoalScreenState extends State<GoalScreen> {
                       boxShadow: isActive
                           ? [
                               BoxShadow(
-                                color: const Color(
-                                  0xFFFF5E3A,
-                                ).withValues(alpha: 0.3),
+                                color: const Color(0xFFFF5E3A).withOpacity(0.3),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
                             ]
                           : [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.02),
+                                color: Colors.black.withOpacity(0.02),
                                 blurRadius: 10,
                               ),
                             ],
@@ -880,7 +841,9 @@ class _GoalScreenState extends State<GoalScreen> {
             ),
             const SizedBox(height: 12),
             _buildInputField(_targetController, "e.g. 10000"),
-            const SizedBox(height: 120),
+            const SizedBox(
+              height: 100,
+            ), // Spacing to prevent overlay with Finish button
           ],
         ),
       ),
@@ -904,7 +867,6 @@ class HomeDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double spent = 0;
     double expectedSaving = income - budget;
     double progress = target > 0
         ? (expectedSaving / target).clamp(0.0, 1.0)
@@ -940,7 +902,7 @@ class HomeDashboard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFF5E3A).withValues(alpha: 0.3),
+                    color: const Color(0xFFFF5E3A).withOpacity(0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -977,7 +939,7 @@ class HomeDashboard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.03),
+                    color: Colors.black.withOpacity(0.03),
                     blurRadius: 15,
                   ),
                 ],
@@ -1022,38 +984,4 @@ class HomeDashboard extends StatelessWidget {
       ),
     );
   }
-}
-
-// ------------------------------------------------------------------
-// CLIPPER (Bottom Wave)
-// ------------------------------------------------------------------
-class BottomWaveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    path.lineTo(0, size.height * 0.4);
-    var firstControlPoint = Offset(size.width * 0.35, size.height * 0.7);
-    var firstEndPoint = Offset(size.width * 0.65, size.height * 0.45);
-    path.quadraticBezierTo(
-      firstControlPoint.dx,
-      firstControlPoint.dy,
-      firstEndPoint.dx,
-      firstEndPoint.dy,
-    );
-    var secondControlPoint = Offset(size.width * 0.85, size.height * 0.3);
-    var secondEndPoint = Offset(size.width, size.height * 0.2);
-    path.quadraticBezierTo(
-      secondControlPoint.dx,
-      secondControlPoint.dy,
-      secondEndPoint.dx,
-      secondEndPoint.dy,
-    );
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
