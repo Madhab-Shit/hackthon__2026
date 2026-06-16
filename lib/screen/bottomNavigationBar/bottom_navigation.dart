@@ -17,10 +17,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     // DashboardScreen(),
     // DashboardScreen(),
     ProfileScreen(),
-    // const DashboardScreen(),
-    // const RecordsScreen(),
-    // const AnalyticsScreen(),
-    // const ProfileScreen(),
   ];
 
   @override

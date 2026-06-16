@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:hacathon_2026/screen/bottomNavigationBar/bottom_navigation.dart';
 import 'package:hacathon_2026/screen/onbording_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // GetX obossoi import korte hobe
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool isLogin = true;
