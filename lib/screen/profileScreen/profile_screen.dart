@@ -7,6 +7,7 @@ import 'package:hacathon_2026/screen/login%20screnn/login_screen.dart';
 import 'package:hacathon_2026/screen/profileScreen/TermsPrivacyScreen/TermsPrivacyScreen.dart';
 import 'package:hacathon_2026/screen/profileScreen/contect%20us/contectus.dart';
 import 'package:hacathon_2026/screen/profileScreen/performinfromation/performinformation.dart';
+import 'package:hacathon_2026/screen/widget/showDialogBox.dart';
 // import 'package:shared_preferences/shared_preferences.dart'; // Uncomment if needed
 
 class ProfileScreen extends StatefulWidget {
@@ -165,7 +166,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: const Color.fromARGB(255, 255, 247, 238),
+
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -192,7 +194,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Get.to(() => PersonalInfoScreen());
                   },
                 ),
-
+                _buildListItem(
+                  Icons.track_changes,
+                  'Goals update',
+                  'Update your goals details',
+                  () {
+                    showPremiumGoalDialog(context);
+                  },
+                ),
                 _buildListItem(
                   Icons.help_outline,
                   'Help Center',

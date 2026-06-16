@@ -3,8 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:hacathon_2026/screen/bottomNavigationBar/bottom_navigation.dart';
-import 'package:hacathon_2026/screen/dashboard/dashboard.dart';
-import 'package:hacathon_2026/screen/onbording_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -89,7 +87,7 @@ class AuthProvider extends ChangeNotifier {
         );
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
-
+        await prefs.remove('popup_completed');
         Get.offAll(() => MainNavigationScreen());
         nameController.clear();
         emailController.clear();
@@ -113,7 +111,7 @@ class AuthProvider extends ChangeNotifier {
           'email': email,
           'createdAt': FieldValue.serverTimestamp(),
         });
-        Get.offAll(() => DashboardScreen());
+        Get.offAll(() => MainNavigationScreen());
         nameController.clear();
         emailController.clear();
         passwordController.clear();
