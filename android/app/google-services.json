@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "1010720787698",
+    "project_id": "rentzia",
+    "storage_bucket": "rentzia.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1010720787698:android:328d055ce7f9cd44f2546b",
+        "android_client_info": {
+          "package_name": "com.example.group_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUL6fJkjpOuxuRyd5NzXefJQv0xMLTxDo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1010720787698:android:1cfc0b2aedca92fcf2546b",
+        "android_client_info": {
+          "package_name": "com.example.hacathon_2026"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUL6fJkjpOuxuRyd5NzXefJQv0xMLTxDo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1010720787698:android:027f7c866bfe032ff2546b",
+        "android_client_info": {
+          "package_name": "com.example.hackathon_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUL6fJkjpOuxuRyd5NzXefJQv0xMLTxDo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
