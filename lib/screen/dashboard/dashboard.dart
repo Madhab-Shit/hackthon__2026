@@ -703,9 +703,17 @@ class PremiumGoalDialog extends StatelessWidget {
                                       ),
                                     );
                                   } else if (success && context.mounted) {
-                                    goalProvider
-                                        .clearControllers(); // সেভ হওয়ার পর ফর্ম ক্লিয়ার
-                                    Navigator.pop(context); // ডায়লগ বন্ধ করা
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    await prefs.setBool(
+                                      'popup_completed',
+                                      true,
+                                    );
+
+                                    goalProvider.clearControllers();
+
+                                    Get.back();
+
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
