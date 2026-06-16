@@ -143,7 +143,9 @@ class LoginScreen extends StatelessWidget {
                                     child: Padding(
                                       padding: const EdgeInsets.only(top: 12.0),
                                       child: TextButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          authProvider.resetPassword(context);
+                                        },
                                         style: TextButton.styleFrom(
                                           foregroundColor: const Color(
                                             0xffFF7B00,
