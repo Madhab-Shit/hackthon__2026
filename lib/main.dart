@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hacathon_2026/controller/signup_signin_controller.dart';
 import 'package:hacathon_2026/firebase_options.dart';
+import 'package:hacathon_2026/screen/dashboard/dashboard.dart';
 import 'package:hacathon_2026/screen/login%20screnn/login_screen.dart';
 import 'package:hacathon_2026/screen/profileScreen/profile_screen.dart';
 import 'package:provider/provider.dart';
@@ -59,7 +60,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const ProfileScreen(), // const add kora hoyeche
+      home: const DashboardScreen(), // const add kora hoyeche
     );
   }
 }

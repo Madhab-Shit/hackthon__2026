@@ -12,11 +12,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    DashboardScreen()
-    // const DashboardScreen(),
-    // const RecordsScreen(),
-    // const AnalyticsScreen(),
-    // const ProfileScreen(),
+    DashboardScreen(),
+    DashboardScreen(),
+    DashboardScreen(),
+    DashboardScreen(),
+    DashboardScreen(),
   ];
 
   @override
