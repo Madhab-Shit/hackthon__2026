@@ -222,7 +222,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
           floatingActionButton: dashboardProvider.isLoading
-              ? _buildDashboardShimmer()
+              ? null
               : FloatingActionButton.extended(
                   onPressed: () async {
                     await Get.to(() => const AddExpenseScreen());

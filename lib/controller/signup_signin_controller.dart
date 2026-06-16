@@ -91,6 +91,9 @@ class AuthProvider extends ChangeNotifier {
         await prefs.setBool('isLoggedIn', true);
 
         Get.offAll(() => MainNavigationScreen());
+        nameController.clear();
+        emailController.clear();
+        passwordController.clear();
         _showCustomPremiumSnackBar(
           title: "Welcome Back!",
           message: "Login Successful!",
@@ -110,7 +113,10 @@ class AuthProvider extends ChangeNotifier {
           'email': email,
           'createdAt': FieldValue.serverTimestamp(),
         });
-        Get.offAll(() => MainNavigationScreen());
+        Get.offAll(() => DashboardScreen());
+        nameController.clear();
+        emailController.clear();
+        passwordController.clear();
 
         _showCustomPremiumSnackBar(
           title: "Welcome!",
