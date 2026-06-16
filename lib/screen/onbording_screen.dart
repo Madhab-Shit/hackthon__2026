@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:hacathon_2026/controller/Onboardingcontroller.dart';
 import 'package:provider/provider.dart';
 
-// ------------------------------------------------------------------
-// 1. MAIN ONBOARDING CONTROLLER
 // ------------------------------------------------------------------
 class OnboardingFlow extends StatefulWidget {
   const OnboardingFlow({super.key});
@@ -17,31 +16,18 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  // User Data State
-  double income = 0;
-  double budget = 0;
-  String goal = '';
-  double target = 0;
-
   void _nextPage() {
-    if (_currentPage < 3) {
+    if (_currentPage < 2) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOutQuart, // iOS style smooth curve
+        curve: Curves.easeOutQuart,
       );
     }
   }
 
   void _finishOnboarding() {
     Navigator.of(context).pushReplacement(
-      CupertinoPageRoute(
-        builder: (context) => HomeDashboard(
-          income: income,
-          budget: budget,
-          goal: goal,
-          target: target,
-        ),
-      ),
+      CupertinoPageRoute(builder: (context) => const HomeDashboard()),
     );
   }
 
@@ -50,31 +36,12 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
     return Scaffold(
       body: PageView(
         controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(), // Disable manual swipe
+        physics: const NeverScrollableScrollPhysics(),
         onPageChanged: (index) => setState(() => _currentPage = index),
         children: [
-          IncomeScreen(
-            onNext: (val) {
-              setState(() => income = val);
-              _nextPage();
-            },
-          ),
-          BudgetScreen(
-            income: income,
-            onNext: (val) {
-              setState(() => budget = val);
-              _nextPage();
-            },
-          ),
-          GoalScreen(
-            onComplete: (selectedGoal, targetAmount) {
-              setState(() {
-                goal = selectedGoal;
-                target = targetAmount;
-              });
-              _finishOnboarding();
-            },
-          ),
+          IncomeScreen(onNext: _nextPage),
+          BudgetScreen(onNext: _nextPage),
+          GoalScreen(onComplete: _finishOnboarding),
         ],
       ),
     );
@@ -82,7 +49,7 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
 }
 
 // ------------------------------------------------------------------
-// REUSABLE BASE SCREEN (Clean UI with Bottom Button)
+// REUSABLE BASE SCREEN
 // ------------------------------------------------------------------
 class BaseScreen extends StatelessWidget {
   final Widget content;
@@ -104,7 +71,6 @@ class BaseScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFFBFBFD),
       body: Stack(
         children: [
-          // Background subtle particles
           Positioned(
             top: size.height * 0.15,
             right: size.width * 0.25,
@@ -121,7 +87,6 @@ class BaseScreen extends StatelessWidget {
             child: _buildDot(),
           ),
 
-          // Main Content
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -129,7 +94,6 @@ class BaseScreen extends StatelessWidget {
             ),
           ),
 
-          // Bottom Navigation Button
           Align(
             alignment: Alignment.bottomCenter,
             child: SafeArea(
@@ -145,12 +109,7 @@ class BaseScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 56,
                     decoration: BoxDecoration(
-                      // gradient: const LinearGradient(
-                      //   colors: [Color(0xFFFF9500), Color(0xFFFF5E3A)],
-                      //   begin: Alignment.centerLeft,
-                      //   end: Alignment.centerRight,
-                      // ),
-                      color: Color(0xffFF7B00),
+                      color: const Color(0xffFF7B00),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
@@ -206,8 +165,7 @@ class BaseScreen extends StatelessWidget {
 // 2. WELCOME SCREEN
 // ------------------------------------------------------------------
 class WelcomeScreen extends StatelessWidget {
-  final VoidCallback onNext;
-  const WelcomeScreen({super.key, required this.onNext});
+  const WelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -215,10 +173,13 @@ class WelcomeScreen extends StatelessWidget {
 
     return BaseScreen(
       buttonText: "Start Journey",
-      onNext: onNext,
+      onNext: () {
+        Navigator.of(context).pushReplacement(
+          CupertinoPageRoute(builder: (context) => const OnboardingFlow()),
+        );
+      },
       content: Stack(
         children: [
-          // Floating Icons around the center
           Positioned(
             top: size.height * 0.10,
             left: 0,
@@ -255,7 +216,6 @@ class WelcomeScreen extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Main Glowing Logo
               Center(
                 child: Container(
                   width: 160,
@@ -337,7 +297,7 @@ class WelcomeScreen extends StatelessWidget {
                   letterSpacing: -0.2,
                 ),
               ),
-              const SizedBox(height: 80), // To clear bottom button
+              const SizedBox(height: 80),
             ],
           ),
         ],
@@ -365,11 +325,29 @@ class WelcomeScreen extends StatelessWidget {
   }
 }
 
+void _showError(BuildContext context, String message) {
+  Get.snackbar(
+    "Error",
+    message,
+    titleText: const Text(
+      "Error",
+      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+    ),
+    messageText: Text(message, style: const TextStyle(color: Colors.white)),
+    icon: const Icon(Icons.error_outline_rounded, color: Colors.white),
+    backgroundColor: Colors.red,
+    colorText: Colors.white,
+    snackPosition: SnackPosition.TOP,
+    borderRadius: 12,
+    margin: const EdgeInsets.all(12),
+  );
+}
+
 // ------------------------------------------------------------------
-// 3. INCOME SCREEN
+// 3. INCOME SCREEN (With Validation)
 // ------------------------------------------------------------------
 class IncomeScreen extends StatefulWidget {
-  final Function(double) onNext;
+  final VoidCallback onNext;
   const IncomeScreen({super.key, required this.onNext});
 
   @override
@@ -395,17 +373,26 @@ class _IncomeScreenState extends State<IncomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.read<OnboardingProvider>();
     return BaseScreen(
       onNext: () {
-        provider.setIncome(double.tryParse(_controller.text) ?? 0);
+        // Validation Logic
+        double incomeValue = double.tryParse(_controller.text) ?? 0;
+        if (incomeValue <= 0) {
+          _showError(
+            context,
+            "Please enter a valid monthly income greater than 0.",
+          );
+          return;
+        }
+
+        context.read<OnboardingProvider>().setIncome(incomeValue);
+        widget.onNext();
       },
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 50),
-            // Step Indicator
+            const SizedBox(height: 50),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
@@ -418,37 +405,28 @@ class _IncomeScreenState extends State<IncomeScreen> {
                   color: Color(0xFF059669),
                   fontWeight: FontWeight.w700,
                   fontSize: 14,
-                  letterSpacing: 0.5,
                 ),
               ),
             ),
             const SizedBox(height: 20),
-
-            // Main Headline
             const Text(
               "What is your\nmonthly income?",
               style: TextStyle(
                 fontSize: 38,
                 fontWeight: FontWeight.w900,
-                letterSpacing: -1.0,
                 height: 1.15,
                 color: Color(0xFF0F172A),
               ),
             ),
             const SizedBox(height: 40),
-
-            // Premium Input Field
             _buildInputField(_controller, "e.g. 5000"),
             const SizedBox(height: 32),
-
-            // Animated Suggestion Chips
             const Text(
               "Quick Select",
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF94A3B8),
-                letterSpacing: 0.3,
               ),
             ),
             const SizedBox(height: 12),
@@ -457,7 +435,6 @@ class _IncomeScreenState extends State<IncomeScreen> {
               runSpacing: 12,
               children: ['3000', '5000', '10000'].map((val) {
                 bool isSelected = _controller.text == val;
-
                 return GestureDetector(
                   onTap: () {
                     _controller.text = val;
@@ -467,7 +444,6 @@ class _IncomeScreenState extends State<IncomeScreen> {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeOutCubic,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 18,
                       vertical: 10,
@@ -483,21 +459,6 @@ class _IncomeScreenState extends State<IncomeScreen> {
                             : const Color(0xFFE2E8F0),
                         width: 1.5,
                       ),
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: const Color(0xFF059669).withOpacity(0.3),
-                                blurRadius: 15,
-                                offset: const Offset(0, 6),
-                              ),
-                            ]
-                          : [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
                     ),
                     child: Text(
                       "₹$val",
@@ -509,14 +470,13 @@ class _IncomeScreenState extends State<IncomeScreen> {
                             ? FontWeight.w800
                             : FontWeight.w600,
                         fontSize: 16,
-                        letterSpacing: 0.5,
                       ),
                     ),
                   ),
                 );
               }).toList(),
             ),
-            const SizedBox(height: 80), // To clear bottom button
+            const SizedBox(height: 80),
           ],
         ),
       ),
@@ -541,7 +501,6 @@ Widget _buildInputField(
         BoxShadow(
           color: const Color(0xFF0F172A).withOpacity(0.04),
           blurRadius: 24,
-          spreadRadius: 0,
           offset: const Offset(0, 10),
         ),
       ],
@@ -583,12 +542,11 @@ Widget _buildInputField(
 }
 
 // ------------------------------------------------------------------
-// 4. BUDGET SCREEN
+// 4. BUDGET SCREEN (With Validation)
 // ------------------------------------------------------------------
 class BudgetScreen extends StatefulWidget {
-  final double income;
-  final Function(double) onNext;
-  const BudgetScreen({super.key, required this.income, required this.onNext});
+  final VoidCallback onNext;
+  const BudgetScreen({super.key, required this.onNext});
 
   @override
   State<BudgetScreen> createState() => _BudgetScreenState();
@@ -596,20 +554,36 @@ class BudgetScreen extends StatefulWidget {
 
 class _BudgetScreenState extends State<BudgetScreen> {
   final TextEditingController _controller = TextEditingController();
-  double budget = 0;
+  double localBudget = 0;
 
   @override
   Widget build(BuildContext context) {
-    double savings = widget.income - budget;
+    final income = context.read<OnboardingProvider>().income;
+    double savings = income - localBudget;
 
     return BaseScreen(
-      onNext: () => widget.onNext(budget),
+      onNext: () {
+        // Validation Logic
+        if (localBudget <= 0) {
+          _showError(context, "Please enter a budget greater than 0.");
+          return;
+        }
+        if (localBudget >= income) {
+          _showError(
+            context,
+            "Budget should be less than your income to save money.",
+          );
+          return;
+        }
+
+        context.read<OnboardingProvider>().setBudget(localBudget);
+        widget.onNext();
+      },
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
             const Text(
               "Step 2 of 3",
               style: TextStyle(
@@ -624,21 +598,18 @@ class _BudgetScreenState extends State<BudgetScreen> {
               style: TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.w800,
-                letterSpacing: -0.5,
                 height: 1.2,
                 color: Color(0xFF1C1C1E),
               ),
             ),
             const SizedBox(height: 40),
-
             _buildInputField(
               _controller,
               "e.g. 4000",
               onChanged: (val) =>
-                  setState(() => budget = double.tryParse(val) ?? 0),
+                  setState(() => localBudget = double.tryParse(val) ?? 0),
             ),
             const SizedBox(height: 30),
-
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               padding: const EdgeInsets.all(20),
@@ -646,7 +617,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: savings >= 0
+                  color: savings > 0
                       ? const Color(0xFF34C759).withOpacity(0.3)
                       : const Color(0xFFFF3B30).withOpacity(0.3),
                   width: 2,
@@ -662,10 +633,10 @@ class _BudgetScreenState extends State<BudgetScreen> {
               child: Row(
                 children: [
                   Icon(
-                    savings >= 0
+                    savings > 0
                         ? Icons.check_circle_rounded
                         : Icons.error_rounded,
-                    color: savings >= 0
+                    color: savings > 0
                         ? const Color(0xFF34C759)
                         : const Color(0xFFFF3B30),
                     size: 28,
@@ -687,7 +658,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
-                          color: savings >= 0
+                          color: savings > 0
                               ? const Color(0xFF1C1C1E)
                               : const Color(0xFFFF3B30),
                         ),
@@ -697,7 +668,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 80), // To clear bottom button
+            const SizedBox(height: 80),
           ],
         ),
       ),
@@ -706,10 +677,10 @@ class _BudgetScreenState extends State<BudgetScreen> {
 }
 
 // ------------------------------------------------------------------
-// 5. GOAL SCREEN
+// 5. GOAL SCREEN (With Validation)
 // ------------------------------------------------------------------
 class GoalScreen extends StatefulWidget {
-  final Function(String, double) onComplete;
+  final VoidCallback onComplete;
   const GoalScreen({super.key, required this.onComplete});
 
   @override
@@ -731,17 +702,28 @@ class _GoalScreenState extends State<GoalScreen> {
   Widget build(BuildContext context) {
     return BaseScreen(
       buttonText: "Finish",
-      onNext: () => widget.onComplete(
-        selectedGoal,
-        double.tryParse(_targetController.text) ?? 0,
-      ),
+      onNext: () {
+        // Validation Logic
+        double targetAmount = double.tryParse(_targetController.text) ?? 0;
+        if (targetAmount <= 0) {
+          _showError(
+            context,
+            "Please enter a valid target amount to save for your goal.",
+          );
+          return;
+        }
+
+        final provider = context.read<OnboardingProvider>();
+        provider.setGoal(selectedGoal);
+        provider.setTarget(targetAmount);
+
+        widget.onComplete();
+      },
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // SizedBox(height: MediaQuery.of(context).size.height * 0.15),
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
             const Text(
               "Step 3 of 3",
               style: TextStyle(
@@ -756,13 +738,11 @@ class _GoalScreenState extends State<GoalScreen> {
               style: TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.w800,
-                letterSpacing: -0.5,
                 height: 1.2,
                 color: Color(0xFF1C1C1E),
               ),
             ),
             const SizedBox(height: 30),
-
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -841,9 +821,7 @@ class _GoalScreenState extends State<GoalScreen> {
             ),
             const SizedBox(height: 12),
             _buildInputField(_targetController, "e.g. 10000"),
-            const SizedBox(
-              height: 100,
-            ), // Spacing to prevent overlay with Finish button
+            const SizedBox(height: 100),
           ],
         ),
       ),
@@ -852,24 +830,17 @@ class _GoalScreenState extends State<GoalScreen> {
 }
 
 // ------------------------------------------------------------------
-// 6. HOME DASHBOARD (Unchanged)
+// 6. HOME DASHBOARD
 // ------------------------------------------------------------------
 class HomeDashboard extends StatelessWidget {
-  final double income, budget, target;
-  final String goal;
-  const HomeDashboard({
-    super.key,
-    required this.income,
-    required this.budget,
-    required this.goal,
-    required this.target,
-  });
+  const HomeDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    double expectedSaving = income - budget;
-    double progress = target > 0
-        ? (expectedSaving / target).clamp(0.0, 1.0)
+    final provider = context.watch<OnboardingProvider>();
+
+    double progress = provider.target > 0
+        ? (provider.savings / provider.target).clamp(0.0, 1.0)
         : 0;
 
     return Scaffold(
@@ -921,7 +892,7 @@ class HomeDashboard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "₹${budget.toStringAsFixed(0)}",
+                    "₹${provider.budget.toStringAsFixed(0)}",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 40,
@@ -950,7 +921,7 @@ class HomeDashboard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        goal,
+                        provider.goal,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
