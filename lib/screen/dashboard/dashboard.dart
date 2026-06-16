@@ -2,8 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hacathon_2026/screen/add%20Expense/add_expese.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // ড্যাশবোর্ড ওপেন হওয়ার ২ সেকেন্ড পর ডায়লগটি শো করবে
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(seconds: 2), () {
+        showPremiumGoalDialog(context);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +35,13 @@ class DashboardScreen extends StatelessWidget {
         'title': 'Total Spent',
         'value': '₹12,030',
         'icon': Icons.outbound_rounded,
-        'color': const Color(0xFFE53935), // Red (Standard for expense)
+        'color': const Color(0xFFE53935), // Red
       },
       {
         'title': 'Safe to Spend/Day',
         'value': '₹198',
         'icon': Icons.today_rounded,
-        'color': const Color(0xFF00BFA5), // Teal (Standard for safe)
+        'color': const Color(0xFF00BFA5), // Teal
       },
       {
         'title': 'Savings Goal',
@@ -36,7 +52,6 @@ class DashboardScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      // Premium Off-White background matching your Login screen
       backgroundColor: const Color.fromARGB(255, 255, 247, 238),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -72,14 +87,14 @@ class DashboardScreen extends StatelessWidget {
                   ),
                   const CircleAvatar(
                     radius: 22,
-                    backgroundColor: Color(0xFFFF7B00), // Main Orange
+                    backgroundColor: Color(0xFFFF7B00),
                     child: Icon(Icons.person, color: Colors.white),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
 
-              // --- Main Balance Card (Orange Premium Look) ---
+              // --- Main Balance Card ---
               _buildMainBalanceCard(),
               const SizedBox(height: 24),
 
@@ -100,7 +115,6 @@ class DashboardScreen extends StatelessWidget {
               LayoutBuilder(
                 builder: (context, constraints) {
                   int crossAxisCount = constraints.maxWidth > 600 ? 4 : 2;
-
                   return GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -141,7 +155,7 @@ class DashboardScreen extends StatelessWidget {
                   TextButton(
                     onPressed: () {},
                     style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xFFFF7B00), // Main Orange
+                      foregroundColor: const Color(0xFFFF7B00),
                     ),
                     child: const Text(
                       "See all",
@@ -171,9 +185,9 @@ class DashboardScreen extends StatelessWidget {
       // --- Floating Action Button ---
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Get.to(() => AddExpenseScreen());
+          Get.to(() => const AddExpenseScreen());
         },
-        backgroundColor: const Color(0xFFFF7B00), // Main Orange
+        backgroundColor: const Color(0xFFFF7B00),
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         icon: const Icon(Icons.add_rounded, color: Colors.white, size: 24),
@@ -189,9 +203,6 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // --------------------------------------------------------
-  // Widget: Main Balance Card with Progress Bar (Orange Gradient)
-  // --------------------------------------------------------
   Widget _buildMainBalanceCard() {
     double budget = 15000;
     double spent = 12030;
@@ -202,19 +213,14 @@ class DashboardScreen extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFFFF7B00), // Main Orange
-            Color(0xFFFFA03A), // Lighter Orange for smooth gradient
-          ],
+          colors: [Color(0xFFFF7B00), Color(0xFFFFA03A)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(
-              0xFFFF7B00,
-            ).withOpacity(0.35), // Orange glowing shadow
+            color: const Color(0xFFFF7B00).withOpacity(0.35),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -265,7 +271,6 @@ class DashboardScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          // Progress Bar
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: LinearProgressIndicator(
@@ -273,9 +278,7 @@ class DashboardScreen extends StatelessWidget {
               minHeight: 8,
               backgroundColor: Colors.white.withOpacity(0.3),
               valueColor: AlwaysStoppedAnimation<Color>(
-                progress > 0.85
-                    ? const Color(0xFFFF3B30)
-                    : Colors.white, // Turns red if almost empty
+                progress > 0.85 ? const Color(0xFFFF3B30) : Colors.white,
               ),
             ),
           ),
@@ -304,9 +307,6 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // --------------------------------------------------------
-  // Widget: Smart AI Insight Card
-  // --------------------------------------------------------
   Widget _buildSmartInsightCard() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -316,9 +316,7 @@ class DashboardScreen extends StatelessWidget {
         border: Border.all(color: const Color(0xFFF2F2F7), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: const Color(
-              0xFFFF7B00,
-            ).withOpacity(0.05), // Subtle orange shadow
+            color: const Color(0xFFFF7B00).withOpacity(0.05),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -348,7 +346,7 @@ class DashboardScreen extends StatelessWidget {
                   "Smart Insight",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFFF7B00), // Main Orange
+                    color: Color(0xFFFF7B00),
                     fontSize: 14,
                   ),
                 ),
@@ -430,9 +428,6 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // --------------------------------------------------------
-  // Widget: Recent Expense Card
-  // --------------------------------------------------------
   Widget _buildRecentExpenseCard(int index) {
     List<Map<String, dynamic>> expenses = [
       {
@@ -448,7 +443,7 @@ class DashboardScreen extends StatelessWidget {
         'amount': '-₹120',
         'icon': Icons.fastfood_rounded,
         'color': const Color(0xFFFF7B00),
-      }, // Match theme
+      },
       {
         'title': 'Metro Recharge',
         'cat': 'Transport',
@@ -457,9 +452,7 @@ class DashboardScreen extends StatelessWidget {
         'color': Colors.blue,
       },
     ];
-
     final expense = expenses[index];
-
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -519,6 +512,314 @@ class DashboardScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ----------------------------------------------------------------------
+// Premium Goal Dialog Code
+// ----------------------------------------------------------------------
+
+// ----------------------------------------------------------------------
+// Premium Goal Dialog Code (Updated with Close Button)
+// ----------------------------------------------------------------------
+
+void showPremiumGoalDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    // বাইরে ক্লিক করে কাটা যাবে না, শুধুমাত্র (X) বাটন বা সেভ করে কাটতে হবে
+    barrierDismissible: false,
+    builder: (context) {
+      return const PremiumGoalDialog();
+    },
+  );
+}
+
+class PremiumGoalDialog extends StatefulWidget {
+  const PremiumGoalDialog({super.key});
+
+  @override
+  State<PremiumGoalDialog> createState() => _PremiumGoalDialogState();
+}
+
+class _PremiumGoalDialogState extends State<PremiumGoalDialog> {
+  final Color primaryOrange = Colors.orange;
+  final Color darkBrownText = const Color(0xFF4A3B32);
+
+  final TextEditingController _incomeController = TextEditingController();
+  final TextEditingController _budgetController = TextEditingController();
+  final TextEditingController _targetController = TextEditingController();
+  final TextEditingController _customGoalController = TextEditingController();
+
+  final List<String> _predefinedGoals = [
+    "New Phone",
+    "Laptop",
+    "Course",
+    "Bike",
+    "Other",
+  ];
+  String _selectedGoal = "New Phone";
+
+  @override
+  void dispose() {
+    _incomeController.dispose();
+    _budgetController.dispose();
+    _targetController.dispose();
+    _customGoalController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      elevation: 10,
+      backgroundColor: Colors.white,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      child: SingleChildScrollView(
+        child: Stack(
+          // Stack ব্যবহার করা হয়েছে যাতে উপরে (X) বাটন বসানো যায়
+          clipBehavior: Clip.none,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  Center(
+                    child: Text(
+                      "Set Your Goals! 🎯",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: darkBrownText,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: Text(
+                      "Plan your monthly budget and save for your dream.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade500,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  _buildLabel("Monthly Income"),
+                  _buildTextField(
+                    controller: _incomeController,
+                    hintText: "e.g. 5000",
+                    icon: Icons.account_balance_wallet_rounded,
+                  ),
+                  const SizedBox(height: 16),
+
+                  _buildLabel("Monthly Budget"),
+                  _buildTextField(
+                    controller: _budgetController,
+                    hintText: "e.g. 4000",
+                    icon: Icons.pie_chart_rounded,
+                  ),
+                  const SizedBox(height: 20),
+
+                  _buildLabel("Select Your Goal"),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: _predefinedGoals.map((goal) {
+                      bool isSelected = _selectedGoal == goal;
+                      return ChoiceChip(
+                        label: Text(goal),
+                        selected: isSelected,
+                        selectedColor: primaryOrange.withOpacity(0.15),
+                        backgroundColor: Colors.grey.shade100,
+                        labelStyle: TextStyle(
+                          color: isSelected
+                              ? primaryOrange
+                              : Colors.grey.shade600,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
+                        ),
+                        side: BorderSide(
+                          color: isSelected
+                              ? primaryOrange
+                              : Colors.transparent,
+                          width: 1.5,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        onSelected: (selected) {
+                          if (selected) {
+                            setState(() {
+                              _selectedGoal = goal;
+                            });
+                          }
+                        },
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 16),
+
+                  if (_selectedGoal == "Other") ...[
+                    _buildTextField(
+                      controller: _customGoalController,
+                      hintText: "Type your custom goal",
+                      icon: Icons.edit_rounded,
+                      isNumeric: false,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+
+                  _buildLabel("Target Amount"),
+                  _buildTextField(
+                    controller: _targetController,
+                    hintText: "e.g. 10000",
+                    icon: Icons.track_changes_rounded,
+                  ),
+                  const SizedBox(height: 32),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryOrange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 4,
+                        shadowColor: primaryOrange.withOpacity(0.5),
+                      ),
+                      onPressed: () {
+                        // --- Validation Logic ---
+                        if (_incomeController.text.isEmpty ||
+                            _budgetController.text.isEmpty ||
+                            _targetController.text.isEmpty ||
+                            (_selectedGoal == "Other" &&
+                                _customGoalController.text.isEmpty)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Please fill all the required fields!",
+                              ),
+                              backgroundColor: Colors.redAccent,
+                            ),
+                          );
+                          return;
+                        }
+
+                        // Data Save Logic Here
+                        String finalGoal = _selectedGoal == "Other"
+                            ? _customGoalController.text
+                            : _selectedGoal;
+
+                        print("Income: ${_incomeController.text}");
+                        print("Budget: ${_budgetController.text}");
+                        print("Goal: $finalGoal");
+                        print("Target: ${_targetController.text}");
+
+                        // সব ঠিক থাকলে ডায়লগটি বন্ধ হবে
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        "Save & Continue",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // --- Top Right Close (Cross) Button ---
+            Positioned(
+              top: 12,
+              right: 12,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.close_rounded,
+                    size: 20,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    // বাটনে ক্লিক করলে ডায়লগ কেটে যাবে
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0, left: 4),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: darkBrownText,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    required IconData icon,
+    bool isNumeric = true,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200, width: 1.5),
+      ),
+      child: TextField(
+        controller: controller,
+        keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+          prefixIcon: Icon(icon, color: Colors.orange.shade300, size: 22),
+          prefixText: isNumeric ? "₹ " : null,
+          prefixStyle: TextStyle(
+            color: darkBrownText,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
+        ),
       ),
     );
   }
