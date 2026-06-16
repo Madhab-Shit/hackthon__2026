@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:hacathon_2026/controller/expense_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ExpenseAnalyticsScreen extends StatefulWidget {
   const ExpenseAnalyticsScreen({super.key});
@@ -45,9 +46,7 @@ class _ExpenseAnalyticsScreenState extends State<ExpenseAnalyticsScreen> {
       body: Consumer<GolesProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: Color(0xFFFF7B00)),
-            );
+            return _buildShimmerLoading();
           }
 
           if (provider.categoryExpenses.isEmpty) {
@@ -305,4 +304,80 @@ class _ExpenseAnalyticsScreenState extends State<ExpenseAnalyticsScreen> {
       ),
     );
   }
+}
+
+Widget _buildShimmerLoading() {
+  return SingleChildScrollView(
+    padding: const EdgeInsets.all(20),
+    child: Column(
+      children: [
+        // Total Expense
+        Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Column(
+            children: [
+              Container(height: 18, width: 150, color: Colors.white),
+              const SizedBox(height: 12),
+              Container(height: 40, width: 120, color: Colors.white),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 40),
+
+        // Pie Chart Placeholder
+        Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            height: 250,
+            width: 250,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 30),
+
+        // Insight Card
+        Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            height: 80,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 20),
+
+        // List Items
+        ...List.generate(
+          5,
+          (index) => Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              child: Container(
+                height: 70,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
