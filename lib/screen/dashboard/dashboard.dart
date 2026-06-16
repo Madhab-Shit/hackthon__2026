@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hacathon_2026/controller/dashbord_controller.dart';
 import 'package:hacathon_2026/screen/add%20Expense/add_expese.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -11,16 +12,28 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
+Future<bool> isPopupCompleted() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('popup_completed') ?? false;
+}
+
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    // ড্যাশবোর্ড ওপেন হওয়ার ২ সেকেন্ড পর ডায়লগটি শো করবে
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(seconds: 2), () {
-        showPremiumGoalDialog(context);
-      });
-    });
+    _checkPopup();
+  }
+
+  Future<void> _checkPopup() async {
+    final completed = await isPopupCompleted();
+
+    if (completed || !mounted) return;
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+
+    showPremiumGoalDialog(context);
   }
 
   @override
@@ -690,9 +703,17 @@ class PremiumGoalDialog extends StatelessWidget {
                                       ),
                                     );
                                   } else if (success && context.mounted) {
-                                    goalProvider
-                                        .clearControllers(); // সেভ হওয়ার পর ফর্ম ক্লিয়ার
-                                    Navigator.pop(context); // ডায়লগ বন্ধ করা
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    await prefs.setBool(
+                                      'popup_completed',
+                                      true,
+                                    );
+
+                                    goalProvider.clearControllers();
+
+                                    Get.back();
+
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
