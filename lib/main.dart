@@ -8,7 +8,7 @@ import 'package:hacathon_2026/controller/goal_provider.dart';
 import 'package:hacathon_2026/controller/expense_provider.dart';
 import 'package:hacathon_2026/controller/signup_signin_controller.dart';
 import 'package:hacathon_2026/firebase_options.dart';
-import 'package:hacathon_2026/screen/authcheck/authcheck.dart';
+import 'package:hacathon_2026/screen/splashScreen/splash_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -25,7 +25,6 @@ void main() async {
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
         ChangeNotifierProvider(create: (_) => ExpensesListProvider()),
       ],
-      // MultiProvider er main child hobe apnar puro app (MyApp)
       child: const MyApp(),
     ),
   );
@@ -40,7 +39,7 @@ class MyApp extends StatelessWidget {
       builder: (context, value, child) {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
+          title: 'Green Track',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.deepOrange,
@@ -65,7 +64,9 @@ class MyApp extends StatelessWidget {
               ),
             ),
           ),
-          home: const AuthChecker(), // const add kora hoyeche
+
+          // SplashScreen ekhane call hobe
+          home: const SplashScreen(),
         );
       },
     );

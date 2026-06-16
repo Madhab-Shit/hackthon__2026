@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:hacathon_2026/controller/expenses_list_controller.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ExpensesScreen extends StatefulWidget {
   const ExpensesScreen({super.key});
@@ -250,9 +251,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
             ),
           ),
           body: provider.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(color: Color(0xFFFF7B00)),
-                )
+              ? _buildExpensesShimmer()
               : RefreshIndicator(
                   color: const Color(0xFFFF7B00),
                   onRefresh: () async {
@@ -451,70 +450,65 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     final String category = expense['category'] ?? 'Other';
     final String timeText = expense['timeText'] ?? '';
 
-    return GestureDetector(
-      onLongPress: () {
-        _showDeleteExpenseDialog(context, provider, expense);
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: const Color(0xFFF2F2F7), width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.025),
-              blurRadius: 12,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            _buildCategoryIcon(category),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFF2F2F7), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.025),
+            blurRadius: 12,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          _buildCategoryIcon(category),
 
-            const SizedBox(width: 16),
+          const SizedBox(width: 16),
 
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 16,
-                      color: Color(0xFF1A1A1A),
-                    ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 16,
+                    color: Color(0xFF1A1A1A),
                   ),
-                  const SizedBox(height: 5),
-                  Text(
-                    timeText.isEmpty ? category : "$category • $timeText",
-                    style: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  timeText.isEmpty ? category : "$category • $timeText",
+                  style: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
+          ),
 
-            const SizedBox(width: 10),
+          const SizedBox(width: 10),
 
-            Text(
-              "-₹${amount.toStringAsFixed(0)}",
-              style: const TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 16,
-                color: Color(0xFFE53935),
-              ),
+          Text(
+            "-₹${amount.toStringAsFixed(0)}",
+            style: const TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 16,
+              color: Color(0xFFE53935),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -566,4 +560,42 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
       child: Icon(icon, color: color, size: 24),
     );
   }
+}
+
+Widget _buildExpensesShimmer() {
+  return ListView(
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+    children: [
+      Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Container(
+          height: 110,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+          ),
+        ),
+      ),
+
+      const SizedBox(height: 24),
+
+      ...List.generate(6, (index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
+            child: Container(
+              height: 85,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+              ),
+            ),
+          ),
+        );
+      }),
+    ],
+  );
 }
