@@ -124,7 +124,6 @@ class AuthProvider extends ChangeNotifier {
           icon: Icons.check_circle_outline_rounded,
           backgroundColor: const Color(0xFF34C759), // Green Success
         );
-        // TODO: Navigate to Home Screen
       }
     } on FirebaseAuthException catch (e) {
       // --- FIREBASE ERROR HANDLING ---
