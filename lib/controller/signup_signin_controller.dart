@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+import 'package:hacathon_2026/screen/onbording_screen.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool isLogin = true;
@@ -41,14 +43,17 @@ class AuthProvider extends ChangeNotifier {
     try {
       if (isLogin) {
         // --- SIGN IN ---
-        await _auth.signInWithEmailAndPassword(email: email, password: password);
-        _showSnackBar(context, "Login Successful!");
+        await _auth.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        //login
         // TODO: Navigate to Home Screen
       } else {
         // --- SIGN UP ---
-        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
-        
+        UserCredential userCredential = await _auth
+            .createUserWithEmailAndPassword(email: email, password: password);
+
         // Save Name to Firestore
         await _firestore.collection('users').doc(userCredential.user!.uid).set({
           'uid': userCredential.user!.uid,
@@ -56,8 +61,9 @@ class AuthProvider extends ChangeNotifier {
           'email': email,
           'createdAt': FieldValue.serverTimestamp(),
         });
+        Get.offAll(() => OnboardingFlow());
 
-        _showSnackBar(context, "Account Created Successfully!");
+        // _showSnackBar(context, "Account Created Successfully!");
         // TODO: Navigate to Home Screen
       }
     } on FirebaseAuthException catch (e) {
@@ -69,7 +75,9 @@ class AuthProvider extends ChangeNotifier {
   }
 
   void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
