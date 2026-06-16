@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hacathon_2026/controller/add_expresscontroller.dart';
+import 'package:hacathon_2026/controller/dashbord_controller.dart';
 import 'package:hacathon_2026/controller/signup_signin_controller.dart';
 import 'package:hacathon_2026/firebase_options.dart';
 import 'package:hacathon_2026/screen/authcheck/authcheck.dart';
@@ -26,6 +27,7 @@ void main() async {
           create: (_) => ExpenseProvider(),
           // Ekhane 'child' hobe na!
         ),
+        ChangeNotifierProvider(create: (_) => GoalProvider()),
       ],
       // MultiProvider er main child hobe apnar puro app (MyApp)
       child: const MyApp(),
