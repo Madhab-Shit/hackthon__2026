@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hacathon_2026/screen/login%20screnn/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,6 +19,145 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final Color textDark = const Color(0xFF1A1A1A);
   final Color textGrey = const Color(0xFF8C8C8C);
 
+  // ------------------------------------------------------------------
+  // LOGOUT BOTTOM SHEET
+  // ------------------------------------------------------------------
+  void _showLogoutBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.only(
+            top: 16,
+            left: 24,
+            right: 24,
+            bottom: 34,
+          ),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(32),
+              topRight: Radius.circular(32),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 1. Drag Handle
+              Container(
+                width: 48,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // 2. Alert Icon
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: Colors.redAccent.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.logout_rounded,
+                  color: Colors.redAccent,
+                  size: 36,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // 3. Title
+              Text(
+                "Log Out",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                  color: textDark,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // 4. Subtitle
+              Text(
+                "Are you sure you want to log out of your account?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: textGrey,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // 5. Action Buttons
+              Row(
+                children: [
+                  // Cancel Button
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: Colors.grey.shade100,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+
+                  // Logout Button
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut();
+
+                        // GetX Navigation
+                        Get.offAll(() => const LoginScreen());
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: Colors.redAccent,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: const Text(
+                        "Logout",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,9 +171,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildHeader(),
               const SizedBox(height: 24),
               _buildProfileCard(),
-              const SizedBox(
-                height: 24,
-              ), // Spacer between profile card and the list
+              const SizedBox(height: 24),
+
               // Account & Security Section
               _buildSectionHeader('Account & Security'),
               const SizedBox(height: 12),
@@ -114,7 +255,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Wrap the left side in an Expanded to prevent pushing icons off-screen
         Expanded(
           child: Row(
             children: [
@@ -192,12 +332,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       decoration: BoxDecoration(
         color: paleOrange,
         borderRadius: BorderRadius.circular(20),
-        // Subtle background watermark effect
         image: DecorationImage(
           alignment: Alignment.centerRight,
-          image: const AssetImage(
-            'assets/leaf_watermark.png',
-          ), // Placeholder if you have an asset
+          image: const AssetImage('assets/leaf_watermark.png'),
           colorFilter: ColorFilter.mode(
             Colors.white.withOpacity(0.4),
             BlendMode.srcATop,
@@ -206,7 +343,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       child: Stack(
         children: [
-          // Simulated Watermark Icon (if no asset is available)
           Positioned(
             right: -20,
             bottom: -20,
@@ -218,7 +354,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           Row(
             children: [
-              // Avatar with camera badge
               Stack(
                 children: [
                   Container(
@@ -228,7 +363,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       shape: BoxShape.circle,
                       border: Border.all(color: primaryOrange, width: 2),
                       image: const DecorationImage(
-                        image: NetworkImage(''), // Placeholder for 3D avatar
+                        image: NetworkImage(
+                          'https://i.pravatar.cc/150',
+                        ), // Sample Avatar
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -259,7 +396,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               const SizedBox(width: 16),
-              // User Info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,7 +446,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
-              // Right Arrow
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: const BoxDecoration(
@@ -346,7 +481,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
         children: [
-          // Icon Container
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -356,7 +490,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Icon(icon, color: primaryOrange, size: 22),
           ),
           const SizedBox(width: 16),
-          // Text Content (Wrapped in Expanded to prevent overflow)
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -374,7 +507,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
           ),
-          // Trailing Icon
           const Icon(Icons.chevron_right, color: Colors.grey, size: 22),
         ],
       ),
@@ -386,7 +518,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       width: double.infinity,
       height: 55,
       child: OutlinedButton(
-        onPressed: () {},
+        onPressed: () =>
+            _showLogoutBottomSheet(context), // Bottom sheet কল করা হয়েছে
         style: OutlinedButton.styleFrom(
           side: BorderSide(color: primaryOrange, width: 1.5),
           shape: RoundedRectangleBorder(
