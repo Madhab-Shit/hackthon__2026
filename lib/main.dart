@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hacathon_2026/controller/signup_signin_controller.dart';
 import 'package:hacathon_2026/firebase_options.dart';
+import 'package:hacathon_2026/screen/authcheck/authcheck.dart';
 import 'package:hacathon_2026/screen/login%20screnn/login_screen.dart';
 import 'package:hacathon_2026/screen/profileScreen/profile_screen.dart';
 import 'package:provider/provider.dart';
@@ -32,34 +33,38 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepOrange,
-          primary: const Color(0xFFFF7043),
-          secondary: const Color(0xFFFFA726),
-        ),
-        scaffoldBackgroundColor: const Color(0xFFF9F9F9),
-        fontFamily: 'Roboto',
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFF7043),
-            foregroundColor: Colors.white,
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+    return Consumer<AuthProvider>(
+      builder: (context, value, child) {
+        return GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.deepOrange,
+              primary: const Color(0xFFFF7043),
+              secondary: const Color(0xFFFFA726),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            textStyle: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+            scaffoldBackgroundColor: const Color(0xFFF9F9F9),
+            fontFamily: 'Roboto',
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF7043),
+                foregroundColor: Colors.white,
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                textStyle: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-      home: const ProfileScreen(), // const add kora hoyeche
+          home: const AuthChecker(), // const add kora hoyeche
+        );
+      },
     );
   }
 }

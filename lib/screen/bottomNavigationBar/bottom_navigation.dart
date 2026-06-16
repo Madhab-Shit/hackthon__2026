@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hacathon_2026/screen/dashboard/dashboard.dart';
+import 'package:hacathon_2026/screen/profileScreen/profile_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -12,7 +13,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    DashboardScreen()
+    DashboardScreen(),
+    DashboardScreen(),
+    DashboardScreen(),
+    ProfileScreen(),
     // const DashboardScreen(),
     // const RecordsScreen(),
     // const AnalyticsScreen(),
