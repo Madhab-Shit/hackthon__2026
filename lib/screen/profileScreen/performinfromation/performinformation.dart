@@ -112,12 +112,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         "phone": phoneController.text.trim(),
         "dob": dobController.text.trim(),
       });
-
-      Get.snackbar(
-        "Success",
-        "Profile updated successfully",
-        snackPosition: SnackPosition.BOTTOM,
-      );
     } catch (e) {
       Get.snackbar("Error", e.toString(), snackPosition: SnackPosition.BOTTOM);
     } finally {
@@ -326,7 +320,12 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         onPressed: () async {
           updateProfile();
 
-          Get.snackbar("Success", "Profile updated successfully");
+          Get.snackbar(
+            "Success",
+            "Profile updated successfully",
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryOrange,

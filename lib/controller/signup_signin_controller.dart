@@ -222,4 +222,36 @@ class AuthProvider extends ChangeNotifier {
     passwordController.dispose();
     super.dispose();
   }
+
+  Future<void> resetPassword(BuildContext context) async {
+    try {
+      final email = emailController.text.trim();
+
+      if (email.isEmpty) {
+        Get.snackbar(
+          "Error",
+          "Please enter your email first",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+
+      Get.snackbar(
+        "Success",
+        "Password reset link sent to your email",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar(
+        "Error",
+        "Something went wrong",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
 }
