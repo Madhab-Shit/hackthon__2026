@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hacathon_2026/screen/Goles%20Screen/goles.dart';
 import 'package:hacathon_2026/screen/dashboard/dashboard.dart';
 import 'package:hacathon_2026/screen/profileScreen/profile_screen.dart';
 
@@ -14,8 +15,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   final List<Widget> _pages = [
     DashboardScreen(),
-    // DashboardScreen(),
-    // DashboardScreen(),
+    DashboardScreen(),
+    ExpenseAnalyticsScreen(),
     ProfileScreen(),
   ];
 
