@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hacathon_2026/screen/helpcenter/helpcenter.dart';
 import 'package:hacathon_2026/screen/login%20screnn/login_screen.dart';
+import 'package:hacathon_2026/screen/profileScreen/TermsPrivacyScreen/TermsPrivacyScreen.dart';
 import 'package:hacathon_2026/screen/profileScreen/contect%20us/contectus.dart';
 import 'package:hacathon_2026/screen/profileScreen/performinfromation/performinformation.dart';
 // import 'package:shared_preferences/shared_preferences.dart'; // Uncomment if needed
@@ -211,7 +212,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Icons.description_outlined,
                   'Terms & Privacy',
                   'Read our terms and privacy policy',
-                  () {},
+                  () {
+                    Get.to(() => TermsPrivacyScreen());
+                  },
                 ),
 
                 const SizedBox(height: 32),
