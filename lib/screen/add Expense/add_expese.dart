@@ -1,5 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hacathon_2026/controller/add_expresscontroller.dart';
+import 'package:provider/provider.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({super.key});
@@ -198,7 +203,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
               const SizedBox(height: 10),
 
-              // _buildDatePicker(),
+              _buildDatePicker(context),
               const SizedBox(height: 18),
 
               // --- 4. TITLE / DESCRIPTION ---
@@ -312,64 +317,45 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     );
   }
 
+  DateTime selectedDate = DateTime.now();
+
+  String formatDate(DateTime date) {
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    return "${date.day} ${months[date.month - 1]} ${date.year}";
+  }
+
   Widget _buildDatePicker(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        // আপনার দেওয়া কাস্টম ডেট-পিকার লজিক এখানে অ্যাড করা হয়েছে
         final DateTime? picked = await showDatePicker(
           context: context,
-          initialDate: DateTime.now(),
+          initialDate: selectedDate,
           firstDate: DateTime(2000),
           lastDate: DateTime(2101),
           helpText: 'SELECT DATE',
           cancelText: 'CANCEL',
           confirmText: 'SELECT',
-          builder: (context, child) {
-            return Theme(
-              data: Theme.of(context).copyWith(
-                colorScheme: ColorScheme.light(
-                  primary: Colors.orange,
-                  onPrimary: Colors.white,
-                  surface: Colors.white,
-                  // onSurface: darkBrownText,
-                ),
-                datePickerTheme: DatePickerThemeData(
-                  backgroundColor: Colors.white,
-                  headerBackgroundColor: Colors.orange,
-                  headerForegroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24.0),
-                  ),
-                  headerHeadlineStyle: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  dayStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  cancelButtonStyle: TextButton.styleFrom(
-                    foregroundColor: Colors.grey.shade600,
-                    textStyle: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                  confirmButtonStyle: TextButton.styleFrom(
-                    foregroundColor: Colors.orange,
-                    textStyle: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
-              ),
-              child: child!,
-            );
-          },
         );
+
+        if (picked != null) {
+          setState(() {
+            selectedDate = picked;
+          });
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -377,69 +363,50 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: const Color(0xFFF3EBE3), width: 1.2),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
         ),
         child: Row(
           children: [
-            // মডার্ন আইকন কন্টেইনার
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.12),
+                color: Colors.orange.withOpacity(.12),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.calendar_today_rounded,
                 color: Colors.orange,
                 size: 22,
               ),
             ),
+
             const SizedBox(width: 16),
-            // টেক্সট এবং সাব-টেক্সট
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Select Date",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade500,
-                      fontWeight: FontWeight.w500,
+                    "Selected Date",
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  Text(
+                    formatDate(selectedDate),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  // Text(
-                  //   "${provider.selectedDate.day} ${_getMonthName(provider.selectedDate.month)} ${provider.selectedDate.year}",
-                  //   style: TextStyle(
-                  //     fontSize: 16,
-                  //     color: darkBrownText,
-                  //     fontWeight: FontWeight.w700,
-                  //     letterSpacing: 0.3,
-                  //   ),
-                  // ),
                 ],
               ),
             ),
-            // ডানদিকের অ্যারো
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.arrow_forward_ios_rounded,
-                color: Colors.grey.shade400,
-                size: 16,
-              ),
+
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.grey.shade400,
+              size: 16,
             ),
           ],
         ),
@@ -502,6 +469,15 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       ),
       child: TextFormField(
         controller: controller,
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return "Please enter a title";
+          }
+          if (value.trim().length < 3) {
+            return "Title must be at least 3 characters";
+          }
+          return null;
+        },
         decoration: InputDecoration(
           hintText: hint,
           prefixIcon: Icon(icon, color: const Color(0xFFFF7B00)),
@@ -513,38 +489,56 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   }
 
   Widget _buildSaveButton() {
-    return GestureDetector(
-      onTap: () {
-        if (_formKey.currentState!.validate()) {
-          // Data Save korar logic ekhane asbe
-          Get.back();
-        }
-      },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFF7B00),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFFF7B00).withOpacity(0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
+    return Consumer<ExpenseProvider>(
+      builder: (context, provider, child) {
+        return GestureDetector(
+          onTap: provider.isLoading
+              ? null
+              : () async {
+                  if (!_formKey.currentState!.validate()) {
+                    return;
+                  }
+
+                 await provider.saveExpense(
+                    amount: _amountController.text,
+                    title: _titleController.text,
+                    category: _selectedCategory,
+                    paymentMethod: _selectedAccount,
+                    date: selectedDate,
+                  );
+
+                  
+                },
+
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFF7B00),
+              borderRadius: BorderRadius.circular(20),
             ),
-          ],
-        ),
-        child: const Center(
-          child: Text(
-            "Save Expense",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+            child: Center(
+              child: provider.isLoading
+                  ? const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 3,
+                      ),
+                    )
+                  : const Text(
+                      "Save Expense",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
