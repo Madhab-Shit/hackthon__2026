@@ -1,20 +1,28 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:hacathon_2026/controller/Onboardingcontroller.dart';
+import 'package:hacathon_2026/controller/signup_signin_controller.dart';
 import 'package:hacathon_2026/firebase_options.dart';
 import 'package:hacathon_2026/screen/login%20screnn/login_screen.dart';
-import 'package:hacathon_2026/screen/onbording_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  runApp( ChangeNotifierProvider(
-      create: (_) => OnboardingProvider(),
+  runApp(
+    MultiProvider(
+      providers: [
+        // Jokhoni OnboardingProvider uncomment korben, theek evabe likhben (without child)
+        // ChangeNotifierProvider(create: (_) => OnboardingProvider()),
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider(),
+          // Ekhane 'child' hobe na!
+        ),
+      ],
+      // MultiProvider er main child hobe apnar puro app (MyApp)
       child: const MyApp(),
-    ),);
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -49,7 +57,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: LoginScreen(),
+      home: const LoginScreen(), // const add kora hoyeche
     );
   }
 }
