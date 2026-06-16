@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hacathon_2026/screen/helpcenter/helpcenter.dart';
 import 'package:hacathon_2026/screen/login%20screnn/login_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hacathon_2026/screen/profileScreen/contect%20us/contectus.dart';
+import 'package:hacathon_2026/screen/profileScreen/performinfromation/performinformation.dart';
+// import 'package:shared_preferences/shared_preferences.dart'; // Uncomment if needed
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -129,8 +131,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: ElevatedButton(
                       onPressed: () async {
                         await FirebaseAuth.instance.signOut();
-
-                        // GetX Navigation
                         Get.offAll(() => const LoginScreen());
                       },
                       style: ElevatedButton.styleFrom(
@@ -166,83 +166,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 24),
-              _buildProfileCard(),
-              const SizedBox(height: 24),
+          physics: const BouncingScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 16.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 24),
+                _buildProfileCard(),
+                const SizedBox(height: 32),
 
-              // Account & Security Section
-              _buildSectionHeader('Account & Security'),
-              const SizedBox(height: 12),
-              _buildListItem(
-                Icons.person_outline,
-                'Personal Information',
-                'Update your personal details',
-                () {},
-              ),
+                _buildSectionHeader('Account & Security'),
+                const SizedBox(height: 16),
+                _buildListItem(
+                  Icons.person_outline,
+                  'Personal Information',
+                  'Update your personal details',
+                  () {
+                    Get.to(() => PersonalInfoScreen());
+                  },
+                ),
 
-              _buildListItem(
-                Icons.security,
-                'Security Settings',
-                'Manage login and security options',
-                () {},
-              ),
+                _buildListItem(
+                  Icons.help_outline,
+                  'Help Center',
+                  'Get help and support',
+                  () {
+                    Get.to(() => const HelpCenterScreen());
+                  },
+                ),
+                _buildListItem(
+                  Icons.chat_bubble_outline,
+                  'Contact Us',
+                  "We're here to help you",
+                  () {
+                    Get.to(() => ContactUsScreen());
+                  },
+                ),
+                _buildListItem(
+                  Icons.description_outlined,
+                  'Terms & Privacy',
+                  'Read our terms and privacy policy',
+                  () {},
+                ),
 
-              const SizedBox(height: 20),
-
-              // Preferences Section
-              // _buildSectionHeader('Preferences'),
-              // const SizedBox(height: 12),
-              // _buildListItem(
-              //   Icons.notifications_none,
-              //   'Notifications',
-              //   'Manage your notification preferences',
-              // ),
-              // _buildListItem(
-              //   Icons.palette_outlined,
-              //   'Theme',
-              //   'Choose your app appearance',
-              // ),
-              // _buildListItem(
-              //   Icons.language,
-              //   'Language',
-              //   'Select your preferred language',
-              // ),
-
-              // const SizedBox(height: 20),
-
-              // Support & More Section
-              _buildSectionHeader('Support & More'),
-              const SizedBox(height: 12),
-              _buildListItem(
-                Icons.help_outline,
-                'Help Center',
-                'Get help and support',
-                () {
-                  Get.to(() => HelpCenterScreen());
-                },
-              ),
-              _buildListItem(
-                Icons.chat_bubble_outline,
-                'Contact Us',
-                "We're here to help you",
-                () {},
-              ),
-              _buildListItem(
-                Icons.description_outlined,
-                'Terms & Privacy',
-                'Read our terms and privacy policy',
-                () {},
-              ),
-
-              const SizedBox(height: 24),
-              _buildLogoutButton(),
-              const SizedBox(height: 20), // Bottom padding
-            ],
+                const SizedBox(height: 32),
+                _buildLogoutButton(),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
@@ -255,70 +231,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: paleOrange,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.eco, color: primaryOrange, size: 24),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Profile',
-                      style: TextStyle(
-                        color: textDark,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Manage your account and preferences',
-                      style: TextStyle(color: textGrey, fontSize: 13),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.notifications_none, size: 26),
-                  color: textDark,
-                  onPressed: () {},
-                ),
-                Positioned(
-                  right: 12,
-                  top: 12,
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: primaryOrange,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: bgColor, width: 2),
-                    ),
-                  ),
-                ),
-              ],
+            Text(
+              'Profile',
+              style: TextStyle(
+                color: textDark,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                letterSpacing: -0.5,
+              ),
             ),
-            IconButton(
-              icon: const Icon(Icons.settings_outlined, size: 26),
-              color: textDark,
-              onPressed: () {},
+            const SizedBox(height: 4),
+            Text(
+              'Manage your account and preferences',
+              style: TextStyle(color: textGrey, fontSize: 14),
             ),
           ],
         ),
@@ -330,26 +258,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: paleOrange,
-        borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(
-          alignment: Alignment.centerRight,
-          image: const AssetImage('assets/leaf_watermark.png'),
-          colorFilter: ColorFilter.mode(
-            Colors.white.withOpacity(0.4),
-            BlendMode.srcATop,
-          ),
+        gradient: LinearGradient(
+          colors: [primaryOrange, darkOrange],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: primaryOrange.withOpacity(0.4),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Stack(
         children: [
           Positioned(
-            right: -20,
-            bottom: -20,
+            right: -30,
+            bottom: -30,
             child: Icon(
               Icons.eco,
-              size: 100,
-              color: primaryOrange.withOpacity(0.05),
+              size: 120,
+              color: Colors.white.withOpacity(0.1),
             ),
           ),
           Row(
@@ -357,15 +288,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Stack(
                 children: [
                   Container(
-                    width: 70,
-                    height: 70,
+                    width: 75,
+                    height: 75,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: primaryOrange, width: 2),
+                      border: Border.all(color: Colors.white, width: 3),
                       image: const DecorationImage(
-                        image: NetworkImage(
-                          'https://i.pravatar.cc/150',
-                        ), // Sample Avatar
+                        image: NetworkImage('https://i.pravatar.cc/150'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -374,88 +303,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     bottom: 0,
                     right: 0,
                     child: Container(
-                      padding: const EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(6),
                       decoration: const BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
                       ),
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: primaryOrange,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.camera_alt,
-                          color: Colors.white,
-                          size: 12,
-                        ),
+                      child: Icon(
+                        Icons.camera_alt,
+                        color: primaryOrange,
+                        size: 14,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 20),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Plaban Maity',
+                    const Text(
+                      'Madhab',
                       style: TextStyle(
-                        color: textDark,
-                        fontSize: 18,
+                        color: Colors.white,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'plabanmaity99@gmail.com',
-                      style: TextStyle(color: textGrey, fontSize: 12),
+                      'madhabshit4142@gmail.com',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 13,
+                      ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
+                        horizontal: 10,
+                        vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.3),
+                        ),
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             Icons.workspace_premium,
-                            color: primaryOrange,
-                            size: 14,
+                            color: Colors.white,
+                            size: 16,
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: 6),
                           Text(
                             'Premium User',
                             style: TextStyle(
-                              color: primaryOrange,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
                       ),
                     ),
                   ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.chevron_right,
-                  color: Colors.grey,
-                  size: 20,
                 ),
               ),
             ],
@@ -469,9 +385,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Text(
       title,
       style: TextStyle(
-        color: primaryOrange,
-        fontSize: 14,
+        color: textDark,
+        fontSize: 18,
         fontWeight: FontWeight.bold,
+        letterSpacing: 0.5,
       ),
     );
   }
@@ -482,44 +399,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String subtitle,
     VoidCallback ontap,
   ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: InkWell(
-        onTap: ontap,
-        borderRadius: BorderRadius.circular(12),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: paleOrange,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: primaryOrange, size: 22),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: textDark,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: ontap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: paleOrange,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(color: textGrey, fontSize: 12),
+                  child: Icon(icon, color: primaryOrange, size: 22),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: textDark,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: textGrey,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.grey.shade400,
+                  size: 18,
+                ),
+              ],
             ),
-            const Icon(Icons.chevron_right, color: Colors.grey, size: 22),
-          ],
+          ),
         ),
       ),
     );
@@ -528,26 +470,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildLogoutButton() {
     return SizedBox(
       width: double.infinity,
-      height: 55,
+      height: 56,
       child: OutlinedButton(
-        onPressed: () =>
-            _showLogoutBottomSheet(context), // Bottom sheet কল করা হয়েছে
+        onPressed: () => _showLogoutBottomSheet(context),
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: primaryOrange, width: 1.5),
+          side: const BorderSide(color: Colors.redAccent, width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.redAccent.withOpacity(0.05),
         ),
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.logout, color: primaryOrange, size: 20),
-            const SizedBox(width: 8),
+            Icon(Icons.logout_rounded, color: Colors.redAccent, size: 22),
+            SizedBox(width: 10),
             Text(
               'Logout',
               style: TextStyle(
-                color: primaryOrange,
+                color: Colors.redAccent,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
