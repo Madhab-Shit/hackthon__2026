@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hacathon_2026/controller/add_expresscontroller.dart';
 import 'package:hacathon_2026/controller/dashbord_controller.dart';
+import 'package:hacathon_2026/controller/expenses_list_controller.dart';
+import 'package:hacathon_2026/controller/goal_provider.dart';
 import 'package:hacathon_2026/controller/expense_provider.dart';
 import 'package:hacathon_2026/controller/signup_signin_controller.dart';
 import 'package:hacathon_2026/firebase_options.dart';
@@ -16,15 +18,12 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        // Jokhoni OnboardingProvider uncomment korben, theek evabe likhben (without child)
-        // ChangeNotifierProvider(create: (_) => OnboardingProvider()),
-        ChangeNotifierProvider(
-          create: (_) => AuthProvider(),
-          // Ekhane 'child' hobe na!
-        ),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ExpenseProvider()),
         ChangeNotifierProvider(create: (_) => GolesProvider()),
-        ChangeNotifierProvider(create: (_) => GoalProvider()), // নতুনটা
+        ChangeNotifierProvider(create: (_) => GoalProvider()),
+        ChangeNotifierProvider(create: (_) => DashboardProvider()),
+        ChangeNotifierProvider(create: (_) => ExpensesListProvider()),
       ],
       // MultiProvider er main child hobe apnar puro app (MyApp)
       child: const MyApp(),
