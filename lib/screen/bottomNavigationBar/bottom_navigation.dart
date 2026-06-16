@@ -83,7 +83,7 @@ class CustomBottomNavBar extends StatelessWidget {
           _buildNavItem(
             index: 0,
             icon: Icons.space_dashboard_rounded,
-            label: 'Home',
+            label: 'Dashbord',
           ),
           _buildNavItem(
             index: 1,

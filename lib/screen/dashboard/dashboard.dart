@@ -282,11 +282,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ],
         ),
-        const CircleAvatar(
-          radius: 22,
-          backgroundColor: Color(0xFFFF7B00),
-          child: Icon(Icons.person, color: Colors.white),
-        ),
       ],
     );
   }
