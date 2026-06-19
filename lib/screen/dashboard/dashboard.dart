@@ -68,7 +68,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             'color': const Color(0xFF00BFA5),
           },
           {
-            'title': 'Save Money',
+            'title': 'Goal Target',
             'value': '₹${dashboardProvider.targetAmount.toStringAsFixed(0)}',
             'icon': Icons.savings_rounded,
             'color': const Color(0xFFFFA03A),
@@ -707,15 +707,13 @@ class PremiumGoalDialog extends StatelessWidget {
                         icon: Icons.account_balance_wallet_rounded,
                       ),
 
-                      const SizedBox(height: 16),
-
-                      _buildLabel("Monthly Budget"),
-                      _buildTextField(
-                        controller: goalProvider.budgetController,
-                        hintText: "e.g. 4000",
-                        icon: Icons.pie_chart_rounded,
-                      ),
-
+                      // const SizedBox(height: 16),
+                      // _buildLabel("Monthly Budget"),
+                      // _buildTextField(
+                      //   controller: goalProvider.budgetController,
+                      //   hintText: "e.g. 4000",
+                      //   icon: Icons.pie_chart_rounded,
+                      // ),
                       const SizedBox(height: 20),
 
                       _buildLabel("Select Your Goal"),
@@ -801,9 +799,10 @@ class PremiumGoalDialog extends StatelessWidget {
 
                                   if (!success && context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
+                                      SnackBar(
                                         content: Text(
-                                          "Please fill all required fields!",
+                                          goalProvider.errorMessage ??
+                                              "Please fill all required fields!",
                                         ),
                                         backgroundColor: Colors.redAccent,
                                       ),

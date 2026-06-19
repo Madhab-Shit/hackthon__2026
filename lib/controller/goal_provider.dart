@@ -4,7 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GoalProvider extends ChangeNotifier {
   final TextEditingController incomeController = TextEditingController();
+
+  // Eta r UI theke use hochhe na, but old code compatibility er jonno rakhlam
   final TextEditingController budgetController = TextEditingController();
+
   final TextEditingController targetController = TextEditingController();
   final TextEditingController customGoalController = TextEditingController();
 
@@ -22,68 +25,116 @@ class GoalProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
+
   void setSelectedGoal(String goal) {
     _selectedGoal = goal;
     notifyListeners();
   }
 
-  // Firebase এ ডেটা সেভ করার ফাংশন
+  double _toDouble(String value) {
+    return double.tryParse(value.trim()) ?? 0.0;
+  }
+
   Future<bool> saveGoalToFirebase() async {
-    // Validation
-    if (incomeController.text.isEmpty ||
-        budgetController.text.isEmpty ||
-        targetController.text.isEmpty ||
-        (_selectedGoal == "Other" && customGoalController.text.isEmpty)) {
-      return false; // Validation failed
+    _errorMessage = null;
+
+    final double income = _toDouble(incomeController.text);
+    final double targetAmount = _toDouble(targetController.text);
+
+    if (incomeController.text.trim().isEmpty ||
+        targetController.text.trim().isEmpty ||
+        (_selectedGoal == "Other" &&
+            customGoalController.text.trim().isEmpty)) {
+      _errorMessage = "Please fill all required fields!";
+      notifyListeners();
+      return false;
     }
+
+    if (income <= 0) {
+      _errorMessage = "Monthly income must be greater than 0.";
+      notifyListeners();
+      return false;
+    }
+
+    if (targetAmount <= 0) {
+      _errorMessage = "Goal money must be greater than 0.";
+      notifyListeners();
+      return false;
+    }
+
+    final double maxGoalMoney = income / 2;
+
+    if (targetAmount > maxGoalMoney) {
+      _errorMessage =
+          "Max allowed ₹${maxGoalMoney.toStringAsFixed(0)}";
+      notifyListeners();
+      return false;
+    }
+
+    final double monthlyBudget = income - targetAmount;
 
     _isLoading = true;
     notifyListeners();
 
     try {
-      String finalGoal = _selectedGoal == "Other"
-          ? customGoalController.text
+      final String finalGoal = _selectedGoal == "Other"
+          ? customGoalController.text.trim()
           : _selectedGoal;
 
-      // Current Logged-in User ID বের করা
-      User? currentUser = FirebaseAuth.instance.currentUser;
+      final User? currentUser = FirebaseAuth.instance.currentUser;
 
-      if (currentUser != null) {
-        // ইউজারের নির্দিষ্ট Document ID তে ডেটা সেভ করা
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(currentUser.uid) // Logged in user's doc id
-            .collection('goals')
-            .doc() // অথবা তুমি চাইলে random ID ও জেনারেট করতে পারো .doc() দিয়ে
-            .set(
-              {
-                'income': double.tryParse(incomeController.text) ?? 0.0,
-                'budget': double.tryParse(budgetController.text) ?? 0.0,
-                'target_amount': double.tryParse(targetController.text) ?? 0.0,
-                'goal_name': finalGoal,
-                'created_at': FieldValue.serverTimestamp(),
-              },
-              SetOptions(merge: true),
-            ); // merge: true দিলে আগের ডেটা রিপ্লেস না হয়ে আপডেট হবে
+      if (currentUser == null) {
+        _errorMessage = "User not logged in!";
+        _isLoading = false;
+        notifyListeners();
+        return false;
       }
 
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('goals')
+          .doc('premium_goal')
+          .set(
+        {
+          'income': income,
+          'budget': monthlyBudget,
+          'target_amount': targetAmount,
+          'goal_name': finalGoal,
+          'updated_at': FieldValue.serverTimestamp(),
+        },
+        SetOptions(merge: true),
+      );
+
       _isLoading = false;
       notifyListeners();
-      return true; // Success
+      return true;
     } catch (e) {
-      print("Error saving goal: $e");
+      debugPrint("Error saving goal: $e");
+      _errorMessage = "Something went wrong. Please try again.";
       _isLoading = false;
       notifyListeners();
-      return false; // Failed
+      return false;
     }
   }
 
-  // Provider dispose হওয়ার সময় কন্ট্রোলারগুলো ক্লিয়ার করে দেওয়া ভালো
   void clearControllers() {
     incomeController.clear();
     budgetController.clear();
     targetController.clear();
     customGoalController.clear();
     _selectedGoal = "New Phone";
+    _errorMessage = null;
+  }
+
+  @override
+  void dispose() {
+    incomeController.dispose();
+    budgetController.dispose();
+    targetController.dispose();
+    customGoalController.dispose();
+    super.dispose();
   }
 }

@@ -280,19 +280,17 @@ class DashboardProvider extends ChangeNotifier {
           goalData['totalIncome'],
     );
 
-    monthlyBudget = _toDouble(
-      goalData['budget'] ??
-          goalData['monthlyBudget'] ??
-          goalData['monthly_budget'] ??
-          goalData['totalBudget'],
-    );
-
     targetAmount = _toDouble(
       goalData['target_amount'] ??
           goalData['targetAmount'] ??
           goalData['target'] ??
           goalData['goalAmount'],
     );
+
+    monthlyBudget = monthlyIncome - targetAmount;
+    if (monthlyBudget < 0) {
+      monthlyBudget = 0.0;
+    }
 
     goalName =
         (goalData['goal_name'] ??
