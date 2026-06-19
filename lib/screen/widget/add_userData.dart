@@ -118,7 +118,7 @@ class _PremiumGoalDialogState extends State<PremiumGoalDialog> {
                       return ChoiceChip(
                         label: Text(goal),
                         selected: isSelected,
-                        selectedColor: primaryOrange.withOpacity(0.15),
+                        selectedColor: primaryOrange.withValues(alpha: 0.15),
                         backgroundColor: Colors.grey.shade100,
                         labelStyle: TextStyle(
                           color: isSelected
@@ -180,7 +180,7 @@ class _PremiumGoalDialogState extends State<PremiumGoalDialog> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         elevation: 4,
-                        shadowColor: primaryOrange.withOpacity(0.5),
+                        shadowColor: primaryOrange.withValues(alpha: 0.5),
                       ),
                       onPressed: () {
                         // Data Save Logic Here

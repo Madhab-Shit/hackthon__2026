@@ -1,9 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hacathon_2026/controller/add_expresscontroller.dart';
+import 'package:hacathon_2026/controller/dashbord_controller.dart';
+import 'package:hacathon_2026/controller/emergency_mode_provider.dart';
+import 'package:hacathon_2026/model/ai_insight_model.dart';
+import 'package:hacathon_2026/service/ai_budget_service.dart';
 import 'package:provider/provider.dart';
 
 class AddExpenseScreen extends StatefulWidget {
@@ -22,26 +23,45 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   String _selectedAccount = 'UPI'; // Default Payment Method
   DateTime _selectedDate = DateTime.now();
   String _selectedCategory = 'Food'; // Default Category
+  SmartExpenseInfo? _smartInfo;
 
   final List<String> _accounts = [
     'Cash',
     'UPI',
     'Bank Transfer',
-    'Credit Card',
+    'Card',
   ];
 
   // Categories list (Ekhon dropdown-e use hobe)
   final List<Map<String, dynamic>> _categories = [
-    {'name': 'Food', 'icon': Icons.fastfood_rounded, 'color': Colors.orange},
-    {'name': 'Transport', 'icon': Icons.train_rounded, 'color': Colors.blue},
-    {'name': 'Entertainment', 'icon': Icons.movie_rounded, 'color': Colors.red},
     {
-      'name': 'Academics',
+      'name': 'Food',
+      'icon': Icons.fastfood_rounded,
+      'color': Colors.orange,
+    },
+    {'name': 'Travel', 'icon': Icons.train_rounded, 'color': Colors.blue},
+    {
+      'name': 'Study',
       'icon': Icons.menu_book_rounded,
       'color': Colors.purple,
     },
     {
-      'name': 'Others',
+      'name': 'Medicine',
+      'icon': Icons.medical_services_rounded,
+      'color': Colors.green,
+    },
+    {
+      'name': 'Shopping',
+      'icon': Icons.shopping_bag_rounded,
+      'color': Colors.pink,
+    },
+    {
+      'name': 'Entertainment',
+      'icon': Icons.movie_rounded,
+      'color': Colors.red,
+    },
+    {
+      'name': 'Other',
       'icon': Icons.card_giftcard_rounded,
       'color': Colors.teal,
     },
@@ -132,7 +152,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                             hintStyle: TextStyle(
                               fontSize: 48,
                               fontWeight: FontWeight.w900,
-                              color: const Color(0xFFFF7B00).withOpacity(0.2),
+                              color: const Color(0xFFFF7B00).withValues(alpha: 0.2),
                             ),
                           ),
                         ),
@@ -236,6 +256,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               const SizedBox(height: 10),
               _buildCategoryDropdown(),
 
+              const SizedBox(height: 14),
+
+              _buildSmartExpensePreview(),
+
               const SizedBox(height: 40),
 
               // --- SAVE BUTTON ---
@@ -257,7 +281,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         border: Border.all(color: const Color(0xFFF2F2F7), width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -267,13 +291,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       child: Theme(
         data: Theme.of(context).copyWith(
           // Ekhane orange color with 10% opacity dewa hoyeche highlight r splash er jonno
-          focusColor: const Color(0xFFFF7B00).withOpacity(0.1),
-          splashColor: const Color(0xFFFF7B00).withOpacity(0.1),
-          highlightColor: const Color(0xFFFF7B00).withOpacity(0.1),
-          hoverColor: const Color(0xFFFF7B00).withOpacity(0.1),
+          focusColor: const Color(0xFFFF7B00).withValues(alpha: 0.1),
+          splashColor: const Color(0xFFFF7B00).withValues(alpha: 0.1),
+          highlightColor: const Color(0xFFFF7B00).withValues(alpha: 0.1),
+          hoverColor: const Color(0xFFFF7B00).withValues(alpha: 0.1),
         ),
         child: DropdownButtonFormField<String>(
-          value: _selectedAccount,
+          initialValue: _selectedAccount,
           dropdownColor: Colors.white,
           elevation: 8,
           borderRadius: BorderRadius.circular(16),
@@ -369,7 +393,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(.12),
+                color: Colors.orange.withValues(alpha: .12),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: const Icon(
@@ -422,7 +446,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         border: Border.all(color: const Color(0xFFEFE8E1), width: 1.5),
       ),
       child: DropdownButtonFormField<String>(
-        value: _selectedCategory,
+        initialValue: _selectedCategory,
         items: _categories.map((cat) {
           return DropdownMenuItem<String>(
             value: cat['name'],
@@ -435,7 +459,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             ),
           );
         }).toList(),
-        onChanged: (val) => setState(() => _selectedCategory = val!),
+        onChanged: (val) {
+          setState(() {
+            _selectedCategory = val!;
+            _updateSmartInfo();
+          });
+        },
         icon: const Padding(
           padding: EdgeInsets.only(right: 16.0),
           child: Icon(
@@ -469,6 +498,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       ),
       child: TextFormField(
         controller: controller,
+        onChanged: (_) => setState(_updateSmartInfo),
         validator: (value) {
           if (value == null || value.trim().isEmpty) {
             return "Please enter a title";
@@ -499,10 +529,28 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     return;
                   }
 
+                  _updateSmartInfo();
+                  final smartInfo = _smartInfo;
+                  final dashboard = context.read<DashboardProvider>();
+                  final emergency = context.read<EmergencyModeProvider>();
+                  final emergencyActive = emergency.isEmergencyActive(
+                    remainingBudget: dashboard.remainingBudget,
+                    daysLeftInMonth: dashboard.daysLeftInMonth,
+                  );
+
+                  if (emergencyActive &&
+                      smartInfo != null &&
+                      !smartInfo.isEssential) {
+                    final shouldSave = await _showNonEssentialWarning(
+                      smartInfo,
+                    );
+                    if (!shouldSave) return;
+                  }
+
                   await provider.saveExpense(
                     amount: _amountController.text,
                     title: _titleController.text,
-                    category: _selectedCategory,
+                    category: smartInfo?.category ?? _selectedCategory,
                     paymentMethod: _selectedAccount,
                     date: selectedDate,
                   );
@@ -538,6 +586,96 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         );
       },
     );
+  }
+
+  Widget _buildSmartExpensePreview() {
+    final info = _smartInfo ??
+        AiBudgetService().classifyExpense(
+          _titleController.text,
+          selectedCategory: _selectedCategory,
+        );
+    final color = info.isEssential ? Colors.green : Colors.deepOrange;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFEFE8E1), width: 1.5),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            info.isEssential
+                ? Icons.verified_rounded
+                : Icons.warning_amber_rounded,
+            color: color,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Smart category: ${info.category}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF1A1A1A),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  info.aiNote,
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                    fontWeight: FontWeight.w600,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _updateSmartInfo() {
+    _smartInfo = AiBudgetService().classifyExpense(
+      _titleController.text,
+      selectedCategory: _selectedCategory,
+    );
+  }
+
+  Future<bool> _showNonEssentialWarning(SmartExpenseInfo info) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text('Emergency Mode Warning'),
+          content: Text(
+            '${info.category} is non-essential. Emergency Mode is active, so save this only if it is necessary.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Save Anyway'),
+            ),
+          ],
+        );
+      },
+    );
+
+    return result ?? false;
   }
 
   String _getMonthName(int month) {

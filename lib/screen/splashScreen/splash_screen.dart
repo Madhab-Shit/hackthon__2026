@@ -99,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen>
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.16),
+                              color: Colors.black.withValues(alpha: 0.16),
                               blurRadius: 28,
                               offset: const Offset(0, 14),
                             ),
@@ -120,7 +120,7 @@ class _SplashScreenState extends State<SplashScreen>
                                 BoxShadow(
                                   color: const Color(
                                     0xFFFF7B00,
-                                  ).withOpacity(0.35),
+                                  ).withValues(alpha: 0.35),
                                   blurRadius: 18,
                                   offset: const Offset(0, 8),
                                 ),
@@ -161,7 +161,7 @@ class _SplashScreenState extends State<SplashScreen>
                               "Track money. Save smarter.",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.88),
+                                color: Colors.white.withValues(alpha: 0.88),
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.2,
@@ -176,10 +176,10 @@ class _SplashScreenState extends State<SplashScreen>
                                 vertical: 14,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.18),
+                                color: Colors.white.withValues(alpha: 0.18),
                                 borderRadius: BorderRadius.circular(24),
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.30),
+                                  color: Colors.white.withValues(alpha: 0.30),
                                 ),
                               ),
                               child: Row(
@@ -191,7 +191,7 @@ class _SplashScreenState extends State<SplashScreen>
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2.3,
                                       valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white.withOpacity(0.95),
+                                        Colors.white.withValues(alpha: 0.95),
                                       ),
                                     ),
                                   ),
@@ -199,7 +199,7 @@ class _SplashScreenState extends State<SplashScreen>
                                   Text(
                                     "Loading your wallet...",
                                     style: TextStyle(
-                                      color: Colors.white.withOpacity(0.95),
+                                      color: Colors.white.withValues(alpha: 0.95),
                                       fontWeight: FontWeight.w700,
                                       fontSize: 14,
                                     ),
@@ -227,7 +227,7 @@ class _SplashScreenState extends State<SplashScreen>
                 "Smart Finance App",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.75),
+                  color: Colors.white.withValues(alpha: 0.75),
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.4,
@@ -261,19 +261,19 @@ class _PremiumOrangeBackground extends StatelessWidget {
         Positioned(
           top: -90,
           right: -80,
-          child: _circle(230, Colors.white.withOpacity(0.16)),
+          child: _circle(230, Colors.white.withValues(alpha: 0.16)),
         ),
 
         Positioned(
           top: 120,
           left: -95,
-          child: _circle(210, Colors.white.withOpacity(0.10)),
+          child: _circle(210, Colors.white.withValues(alpha: 0.10)),
         ),
 
         Positioned(
           bottom: -110,
           right: -70,
-          child: _circle(260, Colors.white.withOpacity(0.13)),
+          child: _circle(260, Colors.white.withValues(alpha: 0.13)),
         ),
 
         Positioned(top: 95, right: 38, child: _smallDot(12)),
@@ -301,7 +301,7 @@ class _PremiumOrangeBackground extends StatelessWidget {
       width: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white.withOpacity(0.35),
+        color: Colors.white.withValues(alpha: 0.35),
       ),
     );
   }
@@ -311,7 +311,7 @@ class _TrackLinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final linePaint = Paint()
-      ..color = Colors.white.withOpacity(0.13)
+      ..color = Colors.white.withValues(alpha: 0.13)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.5
       ..strokeCap = StrokeCap.round;
@@ -339,7 +339,7 @@ class _TrackLinePainter extends CustomPainter {
     canvas.drawPath(path, linePaint);
 
     final dotPaint = Paint()
-      ..color = Colors.white.withOpacity(0.30)
+      ..color = Colors.white.withValues(alpha: 0.30)
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(

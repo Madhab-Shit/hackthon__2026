@@ -205,7 +205,7 @@ class AuthProvider extends ChangeNotifier {
       forwardAnimationCurve: Curves.easeOutBack,
       boxShadows: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.15),
+          color: Colors.black.withValues(alpha: 0.15),
           blurRadius: 15,
           offset: const Offset(0, 8),
         ),
@@ -243,7 +243,7 @@ class AuthProvider extends ChangeNotifier {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException {
       Get.snackbar(
         "Error",
         "Something went wrong",

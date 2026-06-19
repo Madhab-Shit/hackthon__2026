@@ -47,7 +47,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
       context: context,
       barrierDismissible: true,
       barrierLabel: "Delete Expense",
-      barrierColor: Colors.black.withOpacity(0.45),
+      barrierColor: Colors.black.withValues(alpha: 0.45),
       transitionDuration: const Duration(milliseconds: 250),
       pageBuilder: (context, animation, secondaryAnimation) {
         return const SizedBox();
@@ -75,7 +75,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                       borderRadius: BorderRadius.circular(28),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.18),
+                          color: Colors.black.withValues(alpha: 0.18),
                           blurRadius: 30,
                           offset: const Offset(0, 14),
                         ),
@@ -96,7 +96,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.redAccent.withOpacity(0.35),
+                                color: Colors.redAccent.withValues(alpha: 0.35),
                                 blurRadius: 18,
                                 offset: const Offset(0, 8),
                               ),
@@ -338,7 +338,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFF7B00).withOpacity(0.25),
+            color: const Color(0xFFFF7B00).withValues(alpha: 0.25),
             blurRadius: 18,
             offset: const Offset(0, 10),
           ),
@@ -349,7 +349,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.22),
+              color: Colors.white.withValues(alpha: 0.22),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -368,7 +368,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                 Text(
                   "Total Expenses",
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -423,7 +423,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: const Color(0xFFFF7B00).withOpacity(0.12),
+              color: const Color(0xFFFF7B00).withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -463,7 +463,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
           border: Border.all(color: const Color(0xFFF2F2F7), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.025),
+              color: Colors.black.withValues(alpha: 0.025),
               blurRadius: 12,
               offset: const Offset(0, 5),
             ),
@@ -559,7 +559,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         shape: BoxShape.circle,
       ),
       child: Icon(icon, color: color, size: 24),

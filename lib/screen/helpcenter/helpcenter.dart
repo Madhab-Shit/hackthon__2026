@@ -100,7 +100,7 @@ class HelpCenterScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(.04),
+                    color: Colors.black.withValues(alpha: .04),
                     blurRadius: 10,
                     offset: const Offset(0, 5),
                   ),
@@ -117,7 +117,7 @@ class HelpCenterScreen extends StatelessWidget {
 
                   ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: primaryColor.withOpacity(.15),
+                      backgroundColor: primaryColor.withValues(alpha: .15),
                       child: const Icon(
                         Icons.email_outlined,
                         color: primaryColor,
@@ -128,7 +128,7 @@ class HelpCenterScreen extends StatelessWidget {
 
                   ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: primaryColor.withOpacity(.15),
+                      backgroundColor: primaryColor.withValues(alpha: .15),
                       child: const Icon(
                         Icons.phone_outlined,
                         color: primaryColor,

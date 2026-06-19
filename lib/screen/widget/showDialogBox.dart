@@ -100,7 +100,7 @@ class PremiumGoalDialog extends StatelessWidget {
                           return ChoiceChip(
                             label: Text(goal),
                             selected: isSelected,
-                            selectedColor: primaryOrange.withOpacity(0.15),
+                            selectedColor: primaryOrange.withValues(alpha: 0.15),
                             backgroundColor: Colors.grey.shade100,
                             labelStyle: TextStyle(
                               color: isSelected
@@ -159,7 +159,7 @@ class PremiumGoalDialog extends StatelessWidget {
                               borderRadius: BorderRadius.circular(16),
                             ),
                             elevation: 4,
-                            shadowColor: primaryOrange.withOpacity(0.5),
+                            shadowColor: primaryOrange.withValues(alpha: 0.5),
                           ),
                           onPressed: goalProvider.isLoading
                               ? null

@@ -1,8 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:hacathon_2026/controller/add_expresscontroller.dart';
 import 'package:hacathon_2026/controller/dashbord_controller.dart';
+import 'package:hacathon_2026/controller/emergency_mode_provider.dart';
 import 'package:hacathon_2026/controller/expenses_list_controller.dart';
 import 'package:hacathon_2026/controller/goal_provider.dart';
 import 'package:hacathon_2026/controller/expense_provider.dart';
@@ -13,6 +15,7 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
@@ -24,6 +27,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => GoalProvider()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
         ChangeNotifierProvider(create: (_) => ExpensesListProvider()),
+        ChangeNotifierProvider(create: (_) => EmergencyModeProvider()..load()),
       ],
       child: const MyApp(),
     ),

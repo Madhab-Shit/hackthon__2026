@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hacathon_2026/controller/dashbord_controller.dart';
 import 'package:hacathon_2026/controller/goal_provider.dart';
 import 'package:hacathon_2026/screen/add%20Expense/add_expese.dart';
+import 'package:hacathon_2026/widget/ai_insight_card.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
@@ -101,9 +102,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                           _buildMainBalanceCard(dashboardProvider),
 
-                          // const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                          // _buildSmartInsightCard(dashboardProvider),
+                          AiInsightCard(dashboardProvider: dashboardProvider),
                           const SizedBox(height: 24),
 
                           const Text(
@@ -295,7 +296,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final bool isOverBudget = remaining < 0;
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: isOverBudget

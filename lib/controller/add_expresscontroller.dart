@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hacathon_2026/service/ai_budget_service.dart';
 
 class ExpenseProvider extends ChangeNotifier {
   bool isLoading = false;
@@ -28,9 +29,9 @@ class ExpenseProvider extends ChangeNotifier {
           .doc(user.uid)
           .collection('expenses')
           .add({
+            ..._buildSmartExpenseFields(title, category),
             'amount': double.parse(amount),
             'title': title.trim(),
-            'category': category,
             'paymentMethod': paymentMethod,
             'date': Timestamp.fromDate(date),
             'createdAt': FieldValue.serverTimestamp(),
@@ -53,5 +54,18 @@ class ExpenseProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  Map<String, dynamic> _buildSmartExpenseFields(String title, String category) {
+    final smartInfo = AiBudgetService().classifyExpense(
+      title,
+      selectedCategory: category,
+    );
+
+    return {
+      'category': smartInfo.category,
+      'isEssential': smartInfo.isEssential,
+      'aiNote': smartInfo.aiNote,
+    };
   }
 }

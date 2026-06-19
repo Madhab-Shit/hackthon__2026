@@ -213,7 +213,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 15,
                   offset: const Offset(0, 5),
                 ),
@@ -277,7 +277,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.02),
+                color: Colors.black.withValues(alpha: 0.02),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -333,7 +333,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          shadowColor: primaryOrange.withOpacity(0.4),
+          shadowColor: primaryOrange.withValues(alpha: 0.4),
         ),
         child: savelogin
             ? Center(child: CircularProgressIndicator(color: Colors.white))
