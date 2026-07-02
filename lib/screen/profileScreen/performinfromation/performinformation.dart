@@ -112,6 +112,12 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         "phone": phoneController.text.trim(),
         "dob": dobController.text.trim(),
       });
+      Get.snackbar(
+        "Success",
+        "Profile updated successfully",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
     } catch (e) {
       Get.snackbar("Error", e.toString(), snackPosition: SnackPosition.BOTTOM);
     } finally {
@@ -224,28 +230,28 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               ),
             ),
           ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: () {
-                // TODO: Handle Image Picker
-              },
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: primaryOrange,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 3),
-                ),
-                child: const Icon(
-                  Icons.camera_alt,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-            ),
-          ),
+          // Positioned(
+          //   bottom: 0,
+          //   right: 0,
+          //   child: GestureDetector(
+          //     onTap: () {
+          //       // TODO: Handle Image Picker
+          //     },
+          //     child: Container(
+          //       padding: const EdgeInsets.all(10),
+          //       decoration: BoxDecoration(
+          //         color: primaryOrange,
+          //         shape: BoxShape.circle,
+          //         border: Border.all(color: Colors.white, width: 3),
+          //       ),
+          //       child: const Icon(
+          //         Icons.camera_alt,
+          //         color: Colors.white,
+          //         size: 20,
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -319,13 +325,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       child: ElevatedButton(
         onPressed: () async {
           updateProfile();
-
-          Get.snackbar(
-            "Success",
-            "Profile updated successfully",
-            backgroundColor: Colors.green,
-            colorText: Colors.white,
-          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryOrange,

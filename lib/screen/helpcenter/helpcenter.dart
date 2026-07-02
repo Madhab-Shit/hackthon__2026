@@ -93,52 +93,52 @@ class HelpCenterScreen extends StatelessWidget {
             const SizedBox(height: 25),
 
             /// Contact Support
-            Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: .04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  const Text(
-                    "Need More Help?",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+            // Container(
+            //   padding: const EdgeInsets.all(18),
+            //   decoration: BoxDecoration(
+            //     color: Colors.white,
+            //     borderRadius: BorderRadius.circular(20),
+            //     boxShadow: [
+            //       BoxShadow(
+            //         color: Colors.black.withValues(alpha: .04),
+            //         blurRadius: 10,
+            //         offset: const Offset(0, 5),
+            //       ),
+            //     ],
+            //   ),
+            //   child: Column(
+            //     children: [
+            //       const Text(
+            //         "Need More Help?",
+            //         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            //       ),
 
-                  const SizedBox(height: 15),
+            //       const SizedBox(height: 15),
 
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: primaryColor.withValues(alpha: .15),
-                      child: const Icon(
-                        Icons.email_outlined,
-                        color: primaryColor,
-                      ),
-                    ),
-                    title: const Text("support@greentrack.com"),
-                  ),
+            //       ListTile(
+            //         leading: CircleAvatar(
+            //           backgroundColor: primaryColor.withValues(alpha: .15),
+            //           child: const Icon(
+            //             Icons.email_outlined,
+            //             color: primaryColor,
+            //           ),
+            //         ),
+            //         title: const Text("support@greentrack.com"),
+            //       ),
 
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: primaryColor.withValues(alpha: .15),
-                      child: const Icon(
-                        Icons.phone_outlined,
-                        color: primaryColor,
-                      ),
-                    ),
-                    title: const Text("+91 9876543210"),
-                  ),
-                ],
-              ),
-            ),
+            //       ListTile(
+            //         leading: CircleAvatar(
+            //           backgroundColor: primaryColor.withValues(alpha: .15),
+            //           child: const Icon(
+            //             Icons.phone_outlined,
+            //             color: primaryColor,
+            //           ),
+            //         ),
+            //         title: const Text("+91 9876543210"),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
